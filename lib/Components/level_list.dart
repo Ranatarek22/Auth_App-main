@@ -9,7 +9,7 @@ class LevelList extends StatefulWidget {
 
 class _LevelListState extends State<LevelList> {
   String? chosenLevel;
-  List levelList = ['level 1', 'level 2', 'level 3', 'level 4'];
+  List levelList = ['level 1', 'level 2', 'level 3', 'level 4']; // list
 
   @override
   Widget build(BuildContext context) {

@@ -8,7 +8,7 @@ class GenderRadioButton extends StatefulWidget {
 }
 
 class _GenderRadioButtonState extends State<GenderRadioButton> {
-  String groupValue = 'Male';
+  String groupValue = 'Male'; //gender
 
   @override
   Widget build(BuildContext context) {

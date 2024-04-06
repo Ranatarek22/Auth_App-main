@@ -31,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
               // ),
               Trailer(
                 text: 'Already have an account?',
-                textButton: 'Sign In',
+                textButton: 'SignIn',
                 navigationTo: LoginScreen(),
               ),
             ],

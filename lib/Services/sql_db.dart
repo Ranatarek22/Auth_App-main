@@ -23,7 +23,7 @@ class DatabaseHelper {
     return await openDatabase(path, version: 1, onCreate: _createDatabase);
   }
 
-  // Create the database tables
+  // Create the database table
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
       CREATE TABLE $userTable(
