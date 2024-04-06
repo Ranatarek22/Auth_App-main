@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'custom_text_field.dart';
+import 'level_list.dart';
+import 'gender_radio_button.dart';
+import 'package:assignment1/Model/users.dart'; // Importing the User model
+import 'package:assignment1/Services/sql_db.dart'; // Importing the DatabaseHelper class
 
 class SignupInputForm extends StatefulWidget {
   const SignupInputForm({Key? key});
@@ -14,12 +18,13 @@ class _SignupInputFormState extends State<SignupInputForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController birthDate = TextEditingController();
+  final TextEditingController _studentIDController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController =TextEditingController();
 
   String? name, email, studentId, password, confirmPassword;
+
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   Future<void> _signup(BuildContext context) async {
     final baseUrl = 'https://nexus-api-h3ik.onrender.com';
@@ -31,18 +36,20 @@ class _SignupInputFormState extends State<SignupInputForm> {
       'Content-Type': 'application/json',
     };
 
-    final Map<String, dynamic> body = {
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'studentId': birthDate.text,
-      'password': _passwordController.text,
-      // Add more fields as required
-    };
+    final User user = User(
+      name: _nameController.text,
+      email: _emailController.text,
+      studentId: _studentIDController.text,
+      password: _passwordController.text,
+    );
+
+    // Save user to local database
+    await _databaseHelper.insertUser(user.toMap());
 
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode(body),
+      body: jsonEncode(user.toMap()),
     );
 
     if (response.statusCode == 200) {
@@ -109,9 +116,9 @@ class _SignupInputFormState extends State<SignupInputForm> {
             },
           ),
           CustomTextField(
-            controller: birthDate,
+            controller: _studentIDController,
             hintText: "Enter your ID",
-            labelText: 'Birth Day',
+            labelText: 'Student ID',
             icon: Icons.card_membership,
             onChanged: (value) {
               setState(() {
@@ -167,13 +174,25 @@ class _SignupInputFormState extends State<SignupInputForm> {
               return null;
             },
           ),
+          LevelList(),
+          GenderRadioButton(),
           SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  _signup(context);
+                  final User user = User(
+                    name: _nameController.text,
+                    email: _emailController.text,
+                    studentId: _studentIDController.text,
+                    password: _passwordController.text,
+                  );
+
+                  // Save user to local database
+                  await _databaseHelper.insertUser(user.toMap());
+
+                  // _signup(context);
                 }
               },
               child: Text(
@@ -195,7 +214,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    birthDate.dispose();
+    _studentIDController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();

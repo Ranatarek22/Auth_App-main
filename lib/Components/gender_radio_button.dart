@@ -57,12 +57,12 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
                 value: 'Female',
                 groupValue: groupValue,
                 fillColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.disabled)) {
-                        return Colors.black.withOpacity(.32);
-                      }
-                      return Colors.black;
-                    }),
+                    (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return Colors.black.withOpacity(.32);
+                  }
+                  return Colors.black;
+                }),
                 onChanged: (value) {
                   setState(() {
                     groupValue = value!;

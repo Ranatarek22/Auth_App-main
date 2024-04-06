@@ -8,8 +8,7 @@ class LevelList extends StatefulWidget {
 }
 
 class _LevelListState extends State<LevelList> {
-
-  String ?chosenLevel;
+  String? chosenLevel;
   List levelList = ['level 1', 'level 2', 'level 3', 'level 4'];
 
   @override
@@ -33,7 +32,6 @@ class _LevelListState extends State<LevelList> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: DropdownButton(
-
             style: TextStyle(
               color: Color(0xff49454F),
               fontWeight: FontWeight.bold,
@@ -51,8 +49,7 @@ class _LevelListState extends State<LevelList> {
                 chosenLevel = newValue;
               });
             },
-            items: levelList
-                .map((value) {
+            items: levelList.map((value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
