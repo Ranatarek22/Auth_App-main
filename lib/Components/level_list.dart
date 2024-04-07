@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LevelList extends StatefulWidget {
-  const LevelList({super.key});
+  final Function(String?) onChanged; // Callback function
+
+  const LevelList({Key? key, required this.onChanged}) : super(key: key);
 
   @override
   State<LevelList> createState() => _LevelListState();
@@ -47,6 +49,7 @@ class _LevelListState extends State<LevelList> {
             onChanged: (newValue) {
               setState(() {
                 chosenLevel = newValue;
+                widget.onChanged(chosenLevel); // Notify parent widget
               });
             },
             items: levelList.map((value) {

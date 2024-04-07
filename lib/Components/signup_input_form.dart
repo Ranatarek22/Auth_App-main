@@ -20,11 +20,42 @@ class _SignupInputFormState extends State<SignupInputForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _studentIDController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
-  String? name, email, studentId, password, confirmPassword;
+  String? name,
+      email,
+      studentId,
+      password,
+      confirmPassword,
+      level,
+      gender; // Include level attribute
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
+  Future<void> _saveUserToDatabase(BuildContext context) async {
+    final User user = User(
+      name: _nameController.text,
+      email: _emailController.text,
+      studentId: _studentIDController.text,
+      password: _passwordController.text,
+      level: level,
+      gender: gender,
+    );
+
+    // Save user to local database
+    int result = await _databaseHelper.insertUser(user.toMap());
+    if (result == -1) {
+      // Email already exists, show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'This email is already in use. Please use a different email.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Exit the method
+    }
+  }
 
   Future<void> _signup(BuildContext context) async {
     final baseUrl = 'https://nexus-api-h3ik.onrender.com';
@@ -41,10 +72,23 @@ class _SignupInputFormState extends State<SignupInputForm> {
       email: _emailController.text,
       studentId: _studentIDController.text,
       password: _passwordController.text,
+      level: level,
+      gender: gender,
     );
 
     // Save user to local database
-    await _databaseHelper.insertUser(user.toMap());
+    int result = await _databaseHelper.insertUser(user.toMap());
+    if (result == -1) {
+      // Email already exists, show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'This email is already in use. Please use a different email.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Exit the method
+    }
 
     final response = await http.post(
       url,
@@ -174,24 +218,27 @@ class _SignupInputFormState extends State<SignupInputForm> {
               return null;
             },
           ),
-          LevelList(),
-          GenderRadioButton(),
+          LevelList(
+            onChanged: (value) {
+              setState(() {
+                level = value; // Update level attribute
+              });
+            },
+          ),
+          GenderRadioButton(
+            onChanged: (value) {
+              setState(() {
+                gender = value; // Update gender attribute
+              });
+            },
+          ), // Include GenderRadioButton widget
           SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  final User user = User(
-                    name: _nameController.text,
-                    email: _emailController.text,
-                    studentId: _studentIDController.text,
-                    password: _passwordController.text,
-                  );
-
-                  // Save user to local database
-                  await _databaseHelper.insertUser(user.toMap());
-
+                  _saveUserToDatabase(context);
                   // _signup(context);
                 }
               },

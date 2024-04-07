@@ -4,8 +4,18 @@ class User {
   String? email;
   String? studentId;
   String? password;
+  String? level;
+  String? gender; // New attribute
 
-  User({this.id, this.name, this.email, this.studentId, this.password});
+  User({
+    this.id,
+    this.name,
+    this.email,
+    this.studentId,
+    this.password,
+    this.level,
+    this.gender, // Include gender attribute
+  });
 
   // Convert a User object into a Map object
   Map<String, dynamic> toMap() {
@@ -15,6 +25,8 @@ class User {
       'email': email,
       'studentId': studentId,
       'password': password,
+      'level': level,
+      'gender': gender, // Include gender in the map
     };
   }
 
@@ -26,6 +38,8 @@ class User {
       email: map['email'],
       studentId: map['studentId'],
       password: map['password'],
+      level: map['level'],
+      gender: map['gender'], // Assign gender from the map
     );
   }
 }

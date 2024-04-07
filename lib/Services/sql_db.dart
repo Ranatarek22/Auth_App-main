@@ -20,7 +20,8 @@ class DatabaseHelper {
     print("Location :" + databasePath);
     String path = join(await getDatabasesPath(), dbName);
 
-    return await openDatabase(path, version: 1, onCreate: _createDatabase);
+    return await openDatabase(path,
+        version: 5, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   // Create the database table
@@ -31,14 +32,37 @@ class DatabaseHelper {
         name TEXT,
         email TEXT,
         studentId TEXT,
-        password TEXT
+        password TEXT,
+        level TEXT,
+        gender Text // Add the level column
       )
     ''');
+  }
+
+  // Upgrade the database table
+  Future<void> _upgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 5) {
+      await db.execute('ALTER TABLE $userTable ADD COLUMN gender TEXT');
+    }
   }
 
   // Insert user into the database
   Future<int> insertUser(Map<String, dynamic> user) async {
     Database db = await database;
+
+    // Check if the email already exists
+    List<Map<String, dynamic>> existingUsers = await db.query(
+      userTable,
+      where: 'email = ?',
+      whereArgs: [user['email']],
+    );
+    if (existingUsers.isNotEmpty) {
+      // Email already exists, return error code
+      return -1;
+    }
+
+    // Email doesn't exist, insert user
     return await db.insert(userTable, user);
   }
 
@@ -74,6 +98,7 @@ class DatabaseHelper {
         email: maps[i]['email'],
         studentId: maps[i]['studentId'],
         password: maps[i]['password'],
+        level: maps[i]['level'], // Include level in the User object
       );
     });
   }
