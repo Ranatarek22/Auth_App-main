@@ -1,3 +1,4 @@
+import 'package:assignment1/Screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -108,7 +109,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Signup failed. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.grey,
         ),
       );
     }
@@ -124,7 +125,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
           CustomTextField(
             controller: _nameController,
             hintText: "Enter your name",
-            labelText: 'Name',
+            labelText: 'Full Name',
             icon: Icons.person,
             onChanged: (value) {
               setState(() {
@@ -152,9 +153,9 @@ class _SignupInputFormState extends State<SignupInputForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+              if (!RegExp(r"^\d{8}@stud\.fci-cu\.edu\.eg$")
                   .hasMatch(value)) {
-                return 'Please enter a valid email';
+                return 'Please enter a FCI email';
               }
               return null;
             },
@@ -240,6 +241,11 @@ class _SignupInputFormState extends State<SignupInputForm> {
                 if (_formKey.currentState!.validate()) {
                   _saveUserToDatabase(context);
                   // _signup(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return ProfileScreen(user: user,);
+                    }),
+                  );
                 }
               },
               child: Text(
