@@ -83,9 +83,9 @@ class _SigninInputFormState extends State<SigninInputForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+              if (!RegExp(r'^\d{8}@stud\.fci-cu\.edu\.eg$')
                   .hasMatch(value)) {
-                return 'Please enter a valid email';
+                return 'Please enter a FCI email';
               }
               return null;
             },
