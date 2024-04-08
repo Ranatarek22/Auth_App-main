@@ -196,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) {
-            return EditProfileScreen();
+            return EditProfileScreen(user: widget.user,);
           }),
         );
       },

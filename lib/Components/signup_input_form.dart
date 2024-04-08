@@ -241,6 +241,11 @@ class _SignupInputFormState extends State<SignupInputForm> {
                 if (_formKey.currentState!.validate()) {
                   _saveUserToDatabase(context);
                   // _signup(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) {
+                      return ProfileScreen(user: user);
+                    }),
+                  );
                 }
               },
               child: Text(

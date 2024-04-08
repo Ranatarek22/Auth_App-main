@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 
 class GenderRadioButton extends StatefulWidget {
   final Function(String) onChanged; // Add a callback function
+  final String? initialValue; // Initial value
 
-  const GenderRadioButton({Key? key, required this.onChanged})
-      : super(key: key);
+  const GenderRadioButton({Key? key, required this.onChanged, this.initialValue}) : super(key: key);
 
   @override
   State<GenderRadioButton> createState() => _GenderRadioButtonState();
 }
 
 class _GenderRadioButtonState extends State<GenderRadioButton> {
-  String groupValue = 'M'; //gender
+  late String groupValue; //gender
+
+  @override
+  void initState() {
+    super.initState();
+    groupValue = widget.initialValue ?? 'Male'; // Set initial value
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
         Row(
           children: [
             Radio(
-              value: 'M',
+              value: 'Male',
               groupValue: groupValue,
               onChanged: (value) {
                 setState(() {
@@ -42,7 +48,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               },
             ),
             Text(
-              'M',
+              'Male',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -53,7 +59,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               width: 80,
             ),
             Radio(
-              value: 'F',
+              value: 'Female',
               groupValue: groupValue,
               onChanged: (value) {
                 setState(() {
@@ -64,7 +70,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               },
             ),
             Text(
-              'F',
+              'Female',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

@@ -42,9 +42,9 @@ class DatabaseHelper {
   // Upgrade the database table
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 5) {
-      await db.execute('ALTER TABLE $userTable ADD COLUMN gender TEXT');
-    }
+    // if (oldVersion < 5) {
+    //   await db.execute('ALTER TABLE $userTable ADD COLUMN gender TEXT');
+    // }
   }
 
   // Insert user into the database
@@ -66,14 +66,43 @@ class DatabaseHelper {
     return await db.insert(userTable, user);
   }
 
-  // Update user in the database
+  // Get user from the database by email
+  Future<User?> getUserByEmail(String email) async {
+    Database db = await database;
+    List<Map<String, dynamic>> users = await db.query(
+      userTable,
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    if (users.isNotEmpty) {
+      return User(
+        id: users[0]['id'],
+        name: users[0]['name'],
+        email: users[0]['email'],
+        studentId: users[0]['studentId'],
+        password: users[0]['password'],
+        level: users[0]['level'],
+        gender: users[0]['gender'],
+      );
+    } else {
+      return null;
+    }
+  }
+
+// Update user in the database based on email
   Future<int> updateUser(Map<String, dynamic> user) async {
     Database db = await database;
+    if (user['email'] == null) {
+      throw ArgumentError('User email cannot be null');
+    }
+    // Remove 'id' from the user map to prevent setting it to NULL in the update statement
+    user.remove('id');
     return await db.update(
       userTable,
       user,
-      where: 'id = ?',
-      whereArgs: [user['id']],
+      where: 'email = ?',
+      whereArgs: [user['email']!],
     );
   }
 
@@ -127,3 +156,6 @@ class DatabaseHelper {
     }
   }
 }
+//20200187@stud.fci-cu.edu.eg
+//14567891
+//\/data/user/0/com.example.assignment1/databases

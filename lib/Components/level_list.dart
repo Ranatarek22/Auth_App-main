@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class LevelList extends StatefulWidget {
   final Function(String?) onChanged; // Callback function
+  final String? initialValue; // Initial value
 
-  const LevelList({Key? key, required this.onChanged}) : super(key: key);
+  const LevelList({Key? key, required this.onChanged, this.initialValue}) : super(key: key);
 
   @override
   State<LevelList> createState() => _LevelListState();
@@ -11,7 +12,13 @@ class LevelList extends StatefulWidget {
 
 class _LevelListState extends State<LevelList> {
   String? chosenLevel;
-  List levelList = ['1', '2', '3', '4']; // list
+  List levelList = ['level 1', 'level 2', 'level 3', 'level 4']; // list
+
+  @override
+  void initState() {
+    super.initState();
+    chosenLevel = widget.initialValue; // Set initial value
+  }
 
   @override
   Widget build(BuildContext context) {
