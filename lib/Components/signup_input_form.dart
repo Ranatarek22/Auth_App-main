@@ -23,6 +23,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  late User user;
 
   String? name,
       email,
@@ -34,7 +35,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
   Future<void> _saveUserToDatabase(BuildContext context) async {
-    final User user = User(
+    user = User(
       name: _nameController.text,
       email: _emailController.text,
       studentId: _studentIDController.text,
@@ -153,8 +154,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r"^\d{8}@stud\.fci-cu\.edu\.eg$")
-                  .hasMatch(value)) {
+              if (!RegExp(r"^\d{8}@stud\.fci-cu\.edu\.eg$").hasMatch(value)) {
                 return 'Please enter a FCI email';
               }
               return null;
@@ -241,11 +241,6 @@ class _SignupInputFormState extends State<SignupInputForm> {
                 if (_formKey.currentState!.validate()) {
                   _saveUserToDatabase(context);
                   // _signup(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) {
-                      return ProfileScreen(user: user,);
-                    }),
-                  );
                 }
               },
               child: Text(

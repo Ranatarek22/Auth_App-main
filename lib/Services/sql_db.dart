@@ -102,4 +102,28 @@ class DatabaseHelper {
       );
     });
   }
+
+  // Get user from the database
+  Future<User?> getUser(String email) async {
+    Database db = await database;
+    List<Map<String, dynamic>> users = await db.query(
+      userTable,
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    if (users.isNotEmpty) {
+      return User(
+        id: users[0]['id'],
+        name: users[0]['name'],
+        email: users[0]['email'],
+        studentId: users[0]['studentId'],
+        password: users[0]['password'],
+        level: users[0]['level'],
+        gender: users[0]['gender'],
+      );
+    } else {
+      return null;
+    }
+  }
 }

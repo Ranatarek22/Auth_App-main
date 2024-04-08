@@ -11,7 +11,7 @@ class GenderRadioButton extends StatefulWidget {
 }
 
 class _GenderRadioButtonState extends State<GenderRadioButton> {
-  String groupValue = 'Male'; //gender
+  String groupValue = 'M'; //gender
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
         Row(
           children: [
             Radio(
-              value: 'Male',
+              value: 'M',
               groupValue: groupValue,
               onChanged: (value) {
                 setState(() {
@@ -42,7 +42,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               },
             ),
             Text(
-              'Male',
+              'M',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -53,7 +53,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               width: 80,
             ),
             Radio(
-              value: 'Female',
+              value: 'F',
               groupValue: groupValue,
               onChanged: (value) {
                 setState(() {
@@ -64,7 +64,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
               },
             ),
             Text(
-              'Female',
+              'F',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
