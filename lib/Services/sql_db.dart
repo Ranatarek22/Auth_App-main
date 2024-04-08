@@ -21,22 +21,22 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), dbName);
 
     return await openDatabase(path,
-        version: 5, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 7, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
-  // Create the database table
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $userTable(
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        email TEXT,
-        studentId TEXT,
-        password TEXT,
-        level TEXT,
-        gender Text // Add the level column
-      )
-    ''');
+    CREATE TABLE $userTable(
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      email TEXT,
+      studentId TEXT,
+      password TEXT,
+      level TEXT,
+      gender TEXT,
+      imagePath TEXT // Add the imagePath column
+    )
+  ''');
   }
 
   // Upgrade the database table
@@ -100,7 +100,10 @@ class DatabaseHelper {
     user.remove('id');
     return await db.update(
       userTable,
-      user,
+      {
+        ...user,
+        'imagePath': user['imagePath'], // Include imagePath in the update query
+      },
       where: 'email = ?',
       whereArgs: [user['email']!],
     );

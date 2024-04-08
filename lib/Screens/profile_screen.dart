@@ -2,19 +2,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Model/users.dart';
+import '../Services/sql_db.dart';
 import 'edit_profile_screen.dart';
-
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key,required this.user}) : super(key: key);
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
   final User user;
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
+  late DatabaseHelper _databaseHelper; // Database helper instance
+  String? _imagePath;
   File? _image;
   final picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _databaseHelper = DatabaseHelper(); // Initialize database helper
+    _imagePath = widget.user.imagePath; // Set initial image path from user data
+  }
 
   Future getImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -22,10 +31,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        _imagePath = _image!.path;
+        _saveImagePathToDatabase(); // Save image path to database
       } else {
         print('No image selected.');
       }
     });
+  }
+
+  Future<void> _saveImagePathToDatabase() async {
+    // Update the user's image path in the database
+    widget.user.setImagePath(_imagePath!);
+    await _databaseHelper.updateUser(widget.user.toMap());
   }
 
   @override
@@ -79,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       width: 200,
       height: 200,
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -112,8 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(100),
-          child: _image != null
-              ? Image.file(_image!, fit: BoxFit.cover)
+          child: _imagePath != null
+              ? Image.file(File(_imagePath!), fit: BoxFit.cover)
               : Image.asset(
             'assets/images/istockphoto-1300845620-612x612-removebg-preview.png',
             fit: BoxFit.cover,
@@ -196,7 +213,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) {
-            return EditProfileScreen(user: widget.user,);
+            return EditProfileScreen(
+              user: widget.user,
+            );
           }),
         );
       },

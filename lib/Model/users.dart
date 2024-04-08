@@ -5,7 +5,8 @@ class User {
   String? studentId;
   String? password;
   String? level;
-  String? gender; // New attribute
+  String? gender;
+  String? imagePath;
 
   User({
     this.id,
@@ -14,8 +15,14 @@ class User {
     this.studentId,
     this.password,
     this.level,
-    this.gender, // Include gender attribute
+    this.gender,
+    this.imagePath,
   });
+
+  // Setter method to dynamically set the image path
+  void setImagePath(String path) {
+    imagePath = path;
+  }
 
   // Convert a User object into a Map object
   Map<String, dynamic> toMap() {
@@ -26,7 +33,8 @@ class User {
       'studentId': studentId,
       'password': password,
       'level': level,
-      'gender': gender, // Include gender in the map
+      'gender': gender,
+      'imagePath': imagePath,
     };
   }
 
@@ -39,7 +47,8 @@ class User {
       studentId: map['studentId'],
       password: map['password'],
       level: map['level'],
-      gender: map['gender'], // Assign gender from the map
+      gender: map['gender'],
+      imagePath: map['imagePath'],
     );
   }
 }
