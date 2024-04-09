@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-
+//
 class Trailer extends StatelessWidget {
   const Trailer(
       {super.key,
