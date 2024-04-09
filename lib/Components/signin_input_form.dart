@@ -1,9 +1,12 @@
+import 'package:assignment1/Model/users.dart';
+import 'package:assignment1/Screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'custom_text_field.dart';
 import 'package:assignment1/Utilities/secure_storage.dart';
+import 'package:assignment1/Services/sql_db.dart';
 
 class SigninInputForm extends StatefulWidget {
   const SigninInputForm({Key? key});
@@ -17,6 +20,31 @@ class _SigninInputFormState extends State<SigninInputForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _tokenStorage = TokenStorage();
+  late User user;
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  Future<void> _checkCrendentials(BuildContext context) async {
+    // Save user to local database
+    User? result = await _databaseHelper.getUser(_emailController.text);
+    print(result);
+    if (result == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Email or password isn't valid "),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    if (result.password == _passwordController.text) {
+      print(result.password);
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) {
+          return ProfileScreen(user: result);
+        }),
+      );
+    }
+  }
 
   Future<void> _login(BuildContext context) async {
     final baseUrl = 'https://nexus-api-h3ik.onrender.com';
@@ -83,8 +111,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r'^\d{8}@stud\.fci-cu\.edu\.eg$')
-                  .hasMatch(value)) {
+              if (!RegExp(r'^\d{8}@stud\.fci-cu\.edu\.eg$').hasMatch(value)) {
                 return 'Please enter a FCI email';
               }
               return null;
@@ -111,7 +138,8 @@ class _SigninInputFormState extends State<SigninInputForm> {
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  _login(context);
+                  // _login(context);
+                  _checkCrendentials(context);
                 }
               },
               child: Text(

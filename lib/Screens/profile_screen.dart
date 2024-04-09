@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../Model/users.dart';
 import '../Services/sql_db.dart';
 import 'edit_profile_screen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
   final User user;
@@ -32,17 +34,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         _imagePath = _image!.path;
-        _saveImagePathToDatabase(); // Save image path to database
+
+        // Save image path to database
       } else {
         print('No image selected.');
       }
     });
+    if (_image != null && _imagePath != null) {
+      await saveImageToDevice(_image!, _imagePath!.toString().split('/').last);
+      await _saveImagePathToDatabase();
+    }
   }
 
   Future<void> _saveImagePathToDatabase() async {
     // Update the user's image path in the database
     widget.user.setImagePath(_imagePath!);
-    await _databaseHelper.updateUser(widget.user.toMap());
+    try {
+      await _databaseHelper.updateUser(widget.user.toMap());
+      final Directory directory = await getApplicationDocumentsDirectory();
+      print(directory.path);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> saveImageToDevice(File imageFile, String imageName) async {
+    try {
+      // Get the directory for the app's documents directory.
+      // final Directory directory = await getApplicationDocumentsDirectory();
+      final String imagePath = '${Directory.current}/assets/uploads/$imageName';
+
+      // Copy the image file to the destination directory.
+      final File newImage = await imageFile.copy(imagePath);
+      _imagePath = newImage.path;
+      print('Image saved to: ${newImage.path}');
+    } catch (e) {
+      print('Error saving image: $e');
+    }
   }
 
   @override
@@ -132,9 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: _imagePath != null
               ? Image.file(File(_imagePath!), fit: BoxFit.cover)
               : Image.asset(
-            'assets/images/istockphoto-1300845620-612x612-removebg-preview.png',
-            fit: BoxFit.cover,
-          ),
+                  'assets/images/istockphoto-1300845620-612x612-removebg-preview.png',
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
     );

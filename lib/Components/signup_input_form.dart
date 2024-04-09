@@ -24,7 +24,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   late User user;
-
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   String? name,
       email,
       studentId,
@@ -33,7 +33,6 @@ class _SignupInputFormState extends State<SignupInputForm> {
       level,
       gender; // Include level attribute
 
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
   Future<void> _saveUserToDatabase(BuildContext context) async {
     user = User(
       name: _nameController.text,
@@ -46,6 +45,10 @@ class _SignupInputFormState extends State<SignupInputForm> {
 
     // Save user to local database
     int result = await _databaseHelper.insertUser(user.toMap());
+    User? data = await _databaseHelper.getUser(_emailController.text);
+    if (data == null) {
+      return;
+    }
     if (result == -1) {
       // Email already exists, show snackbar
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,6 +59,12 @@ class _SignupInputFormState extends State<SignupInputForm> {
         ),
       );
       return; // Exit the method
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) {
+          return ProfileScreen(user: data);
+        }),
+      );
     }
   }
 
@@ -241,11 +250,6 @@ class _SignupInputFormState extends State<SignupInputForm> {
                 if (_formKey.currentState!.validate()) {
                   _saveUserToDatabase(context);
                   // _signup(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) {
-                      return ProfileScreen(user: user);
-                    }),
-                  );
                 }
               },
               child: Text(

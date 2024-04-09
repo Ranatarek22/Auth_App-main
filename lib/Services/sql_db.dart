@@ -21,7 +21,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), dbName);
 
     return await openDatabase(path,
-        version: 7, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 8, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   Future<void> _createDatabase(Database db, int version) async {
@@ -42,9 +42,9 @@ class DatabaseHelper {
   // Upgrade the database table
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    // if (oldVersion < 5) {
-    //   await db.execute('ALTER TABLE $userTable ADD COLUMN gender TEXT');
-    // }
+    if (oldVersion < 8) {
+      await db.execute('ALTER TABLE $userTable ADD COLUMN imagePath TEXT');
+    }
   }
 
   // Insert user into the database
