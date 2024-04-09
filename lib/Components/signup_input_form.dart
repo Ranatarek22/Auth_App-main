@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'custom_text_field.dart';
 import 'level_list.dart';
 import 'gender_radio_button.dart';
-import 'package:assignment1/Model/users.dart'; // Importing the User model
-import 'package:assignment1/Services/sql_db.dart'; // Importing the DatabaseHelper class
+import 'package:assignment1/Model/users.dart';
+import 'package:assignment1/Services/sql_db.dart';
 
 class SignupInputForm extends StatefulWidget {
   const SignupInputForm({Key? key});
@@ -14,7 +14,6 @@ class SignupInputForm extends StatefulWidget {
   @override
   State<SignupInputForm> createState() => _SignupInputFormState();
 }
-
 class _SignupInputFormState extends State<SignupInputForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -31,7 +30,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
       password,
       confirmPassword,
       level,
-      gender; // Include level attribute
+      gender; 
 
   Future<void> _saveUserToDatabase(BuildContext context) async {
     user = User(
@@ -43,14 +42,13 @@ class _SignupInputFormState extends State<SignupInputForm> {
       gender: gender,
     );
 
-    // Save user to local database
     int result = await _databaseHelper.insertUser(user.toMap());
     User? data = await _databaseHelper.getUser(_emailController.text);
     if (data == null) {
       return;
     }
     if (result == -1) {
-      // Email already exists, show snackbar
+     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -58,7 +56,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Exit the method
+      return; 
     } else {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) {
@@ -87,10 +85,10 @@ class _SignupInputFormState extends State<SignupInputForm> {
       gender: gender,
     );
 
-    // Save user to local database
+   
     int result = await _databaseHelper.insertUser(user.toMap());
     if (result == -1) {
-      // Email already exists, show snackbar
+     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -98,7 +96,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Exit the method
+      return;
     }
 
     final response = await http.post(
@@ -108,12 +106,12 @@ class _SignupInputFormState extends State<SignupInputForm> {
     );
 
     if (response.statusCode == 200) {
-      // Signup successful, handle response
+    
       print('Signup successful');
       print('Response: ${response.body}');
-      // Optionally, navigate to the next screen or show a success message
+    
     } else {
-      // Signup failed, show error message
+     
       print('Signup failed');
       print('Error: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -231,17 +229,17 @@ class _SignupInputFormState extends State<SignupInputForm> {
           LevelList(
             onChanged: (value) {
               setState(() {
-                level = value; // Update level attribute
+                level = value; 
               });
             },
           ),
           GenderRadioButton(
             onChanged: (value) {
               setState(() {
-                gender = value; // Update gender attribute
+                gender = value; 
               });
             },
-          ), // Include GenderRadioButton widget
+          ),
           SizedBox(height: 20),
           SizedBox(
             width: double.infinity,

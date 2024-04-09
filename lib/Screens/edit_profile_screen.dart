@@ -12,7 +12,7 @@ import '../Services/sql_db.dart';
 import 'package:path_provider/path_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final User user; // Add a user parameter to receive user data
+  final User user; 
   const EditProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
@@ -25,27 +25,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _studentIDController = TextEditingController();
   final TextEditingController _oldPasswordController =
-      TextEditingController(); // Add old password controller
+      TextEditingController(); 
   final TextEditingController _newPasswordController =
-      TextEditingController(); // Add new password controller
+      TextEditingController(); 
   final TextEditingController _confirmPasswordController =
-      TextEditingController(); // Add confirm password controller
-  late String gender; // Initialize gender
-  late String level; // Initialize level
+      TextEditingController(); 
+  late String gender;
+  late String level;
   late String password;
   late String confirmPassword;
-  final _formKey = GlobalKey<FormState>(); // Add form key
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // Initialize text field controllers with user data
+   
     _nameController.text = widget.user.name!;
     _studentIDController.text = widget.user.studentId!;
-    gender = widget.user.gender ?? ''; // Initialize gender with user data
-    level = widget.user.level ?? ''; // Initialize level with user data
-    password = ''; // Initialize password
-    confirmPassword = ''; // Initialize confirm password
+    gender = widget.user.gender ?? ''; 
+    level = widget.user.level ?? ''; 
+    password = '';
+    confirmPassword = ''; 
   }
 
   @override
@@ -54,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context); // Navigate back
+            Navigator.pop(context); 
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -75,10 +75,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Profile picture and edit button
+              
                 _buildProfileAvatar(),
                 SizedBox(height: 20),
-                // Custom text fields wrapped in Form
+              
                 CustomTextField(
                   controller: _nameController,
                   hintText: "Enter your name",
@@ -110,7 +110,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   icon: Icons.lock,
                   obscureText: true,
                   validator: (value) {
-                    // Allow empty string if field is not being changed
                     if (_newPasswordController.text.isEmpty && value == null ||
                         value!.isEmpty) {
                       return null;
@@ -129,7 +128,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   icon: Icons.lock,
                   obscureText: true,
                   validator: (value) {
-                    // Allow empty string if field is not being changed
                     if (value!.isEmpty) {
                       return null;
                     }
@@ -146,7 +144,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   icon: Icons.lock,
                   obscureText: true,
                   validator: (value) {
-                    // Allow empty string if field is not being changed
                     if (_newPasswordController.text.isEmpty && value == null ||
                         value!.isEmpty) {
                       return null;
@@ -164,7 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     });
                   },
                   initialValue:
-                      widget.user.level, // Pass initial value to the list
+                      widget.user.level, 
                 ),
                 GenderRadioButton(
                   onChanged: (value) {
@@ -173,7 +170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     });
                   },
                   initialValue: widget
-                      .user.gender, // Pass initial value to the radio button
+                      .user.gender,
                 ),
                 SizedBox(height: 20),
                 SizedBox(
@@ -181,7 +178,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Handle update logic here
                       _updateProfile(context);
                     },
                     child: Text(
@@ -202,15 +198,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Function to update profile
+ 
   void _updateProfile(BuildContext context) async {
-    // Validate form fields
+    
     if (_formKey.currentState!.validate()) {
-      // Create a new user object with updated data
       User updatedUser = User(
         id: widget.user.id,
         name: _nameController.text,
-        email: widget.user.email, // Do not update email
+        email: widget.user.email, 
         studentId: _studentIDController.text,
         gender: gender,
         level: level,
@@ -220,20 +215,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         imagePath: _image?.path,
       );
 
-      // Call the update method from DatabaseHelper
+     
       int result = await DatabaseHelper().updateUser(updatedUser.toMap());
 
       if (result != 0) {
-        // Update successful
-        // You can show a success message or navigate back
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) {
             return ProfileScreen(user: updatedUser);
           }),
         );
       } else {
-        // Update failed
-        // You can show an error message
+       
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to update profile'),
@@ -337,11 +329,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.purple, // Background color of the button
+                  color: Colors.purple, 
                 ),
                 child: Icon(
                   Icons.edit,
-                  color: Colors.white, // Color of the icon
+                  color: Colors.white, 
                 ),
               ),
             ),

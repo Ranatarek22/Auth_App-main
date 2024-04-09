@@ -15,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late DatabaseHelper _databaseHelper; // Database helper instance
+  late DatabaseHelper _databaseHelper;
   String? _imagePath;
   File? _image;
   final picker = ImagePicker();
@@ -23,8 +23,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _databaseHelper = DatabaseHelper(); // Initialize database helper
-    _imagePath = widget.user.imagePath; // Set initial image path from user data
+    _databaseHelper = DatabaseHelper();
+    _imagePath = widget.user.imagePath;
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    String? imagePath =
+        await _databaseHelper.getUserImagePath(widget.user.email!);
+    setState(() {
+      _imagePath = imagePath;
+    });
   }
 
   Future getImage(ImageSource source) async {
@@ -34,8 +43,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         _imagePath = _image!.path;
-
-        // Save image path to database
       } else {
         print('No image selected.');
       }
@@ -47,12 +54,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveImagePathToDatabase() async {
-    // Update the user's image path in the database
     widget.user.setImagePath(_imagePath!);
     try {
       await _databaseHelper.updateUser(widget.user.toMap());
-      final Directory directory = await getApplicationDocumentsDirectory();
-      print(directory.path);
+      // final Directory directory = await getApplicationDocumentsDirectory();
+      // print(directory.path);
     } catch (error) {
       print(error);
     }
@@ -60,11 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> saveImageToDevice(File imageFile, String imageName) async {
     try {
-      // Get the directory for the app's documents directory.
-      // final Directory directory = await getApplicationDocumentsDirectory();
-      final String imagePath = '${Directory.current}/assets/uploads/$imageName';
-
-      // Copy the image file to the destination directory.
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String imagePath = '${directory.path}/uploads/$imageName';
       final File newImage = await imageFile.copy(imagePath);
       _imagePath = newImage.path;
       print('Image saved to: ${newImage.path}');
@@ -112,6 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildProfileInfo(),
               SizedBox(height: 20),
               _buildEditProfileButton(context),
+              SizedBox(height: 250),
+              _buildLogOutButton(context),
             ],
           ),
         ),
@@ -168,6 +173,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildLogOutButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        // await _databaseHelper.updateUserLoginStatus(widget.user.email!, false);
+        // Navigate to the login screen
+        Navigator.of(context).pushReplacementNamed(
+            '/login_screen'); // Replace with your login screen route
+      },
+      style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple[100]), // Choose your button color
+      child: SizedBox(
+        height: 50,
+        width: 150,
+        child: Center(
+          child: Text(
+            'Log Out',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEditIconButton() {
     return GestureDetector(
       onTap: () {
@@ -206,11 +234,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: 50,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.purple, // Background color of the button
+          color: Colors.purple,
         ),
         child: Icon(
           Icons.edit,
-          color: Colors.white, // Color of the icon
+          color: Colors.white,
         ),
       ),
     );

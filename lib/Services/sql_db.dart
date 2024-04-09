@@ -1,20 +1,14 @@
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:assignment1/Model/users.dart';
+import '../Model/users.dart';
 
 class DatabaseHelper {
   static Database? _database;
   static const String dbName = 'user_database.db';
   static const String userTable = 'user';
 
-  // Open the database
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await initDatabase();
-    return _database!;
-  }
 
-  // Initialize the database
   Future<Database> initDatabase() async {
     String databasePath = await getDatabasesPath();
     print("Location :" + databasePath);
@@ -47,67 +41,49 @@ class DatabaseHelper {
     }
   }
 
-  // Insert user into the database
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await initDatabase();
+    return _database!;
+  }
+
   Future<int> insertUser(Map<String, dynamic> user) async {
     Database db = await database;
-
-    // Check if the email already exists
-    List<Map<String, dynamic>> existingUsers = await db.query(
-      userTable,
-      where: 'email = ?',
-      whereArgs: [user['email']],
-    );
-    if (existingUsers.isNotEmpty) {
-      // Email already exists, return error code
-      return -1;
-    }
-
-    // Email doesn't exist, insert user
     return await db.insert(userTable, user);
   }
 
-  // Get user from the database by email
-  Future<User?> getUserByEmail(String email) async {
+  Future<String?> getUserImagePath(String email) async {
     Database db = await database;
-    List<Map<String, dynamic>> users = await db.query(
+    List<Map<String, dynamic>> result = await db.query(
       userTable,
+      columns: ['imagePath'],
       where: 'email = ?',
       whereArgs: [email],
     );
-
-    if (users.isNotEmpty) {
-      return User(
-        id: users[0]['id'],
-        name: users[0]['name'],
-        email: users[0]['email'],
-        studentId: users[0]['studentId'],
-        password: users[0]['password'],
-        level: users[0]['level'],
-        gender: users[0]['gender'],
-      );
+    if (result.isNotEmpty) {
+      return result[0]['imagePath'] as String?;
     } else {
       return null;
     }
   }
 
-// Update user in the database based on email
+  
   Future<int> updateUser(Map<String, dynamic> user) async {
     Database db = await database;
     if (user['email'] == null) {
       throw ArgumentError('User email cannot be null');
     }
-    // Remove 'id' from the user map to prevent setting it to NULL in the update statement
-    user.remove('id');
     return await db.update(
       userTable,
       {
         ...user,
-        'imagePath': user['imagePath'], // Include imagePath in the update query
+        'imagePath': user['imagePath'], 
       },
       where: 'email = ?',
       whereArgs: [user['email']!],
     );
   }
+
 
   // Delete user from the database
   Future<int> deleteUser(int id) async {
@@ -119,7 +95,6 @@ class DatabaseHelper {
     );
   }
 
-  // Get all users from the database
   Future<List<User>> getUsers() async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(userTable);
@@ -130,12 +105,11 @@ class DatabaseHelper {
         email: maps[i]['email'],
         studentId: maps[i]['studentId'],
         password: maps[i]['password'],
-        level: maps[i]['level'], // Include level in the User object
+        level: maps[i]['level'], 
       );
     });
   }
 
-  // Get user from the database
   Future<User?> getUser(String email) async {
     Database db = await database;
     List<Map<String, dynamic>> users = await db.query(
@@ -162,3 +136,4 @@ class DatabaseHelper {
 //20200187@stud.fci-cu.edu.eg
 //14567891
 //\/data/user/0/com.example.assignment1/databases
+//
