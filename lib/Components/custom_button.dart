@@ -9,7 +9,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Make button full width
+      width: double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(
@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 10), // Adjust button height
+          padding: EdgeInsets.symmetric(vertical: 10),
           backgroundColor: Colors.black,
         ),
       ),

@@ -24,7 +24,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   Future<void> _checkCrendentials(BuildContext context) async {
-    // Save user to local database
+
     User? result = await _databaseHelper.getUser(_emailController.text);
     print(result);
     if (result == null) {
@@ -38,10 +38,10 @@ class _SigninInputFormState extends State<SigninInputForm> {
     }
     if (result.password == _passwordController.text) {
       print(result.password);
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) {
-          return ProfileScreen(user: result);
-        }),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(user: result),
+        ),
       );
     }
   }
@@ -67,22 +67,22 @@ class _SigninInputFormState extends State<SigninInputForm> {
     );
 
     if (response.statusCode == 200) {
-      // Login successful, handle response
+
       final token = jsonDecode(response.body)['token'];
-      await _tokenStorage.saveToken(token); // Save the token using TokenStorage
+      await _tokenStorage.saveToken(token);
       print('Login successful');
       print('Response: ${response.body}');
 
-      // Check if the token is stored
+
       final storedToken = await _tokenStorage.getToken();
       if (storedToken != null) {
         print('Token stored successfully: $storedToken');
       } else {
         print('Failed to store token');
-        // Handle the case where token storage fails
+
       }
     } else {
-      // Login failed, show error message
+
       print('Login failed');
       print('Error: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,7 +106,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
             hintText: "Enter your email",
             labelText: 'Email',
             icon: Icons.email,
-            onChanged: (value) {}, // Add onChanged callback here
+            onChanged: (value) {},
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
@@ -123,7 +123,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
             hintText: "Enter your password",
             labelText: 'Password',
             icon: Icons.lock,
-            onChanged: (value) {}, // Add onChanged callback here
+            onChanged: (value) {},
             obscureText: true,
             validator: (value) {
               if (value == null || value.isEmpty) {

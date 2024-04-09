@@ -28,12 +28,11 @@ class DatabaseHelper {
       password TEXT,
       level TEXT,
       gender TEXT,
-      imagePath TEXT // Add the imagePath column
+      imagePath TEXT
     )
   ''');
   }
 
-  // Upgrade the database table
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 8) {
@@ -85,7 +84,7 @@ class DatabaseHelper {
   }
 
 
-  // Delete user from the database
+
   Future<int> deleteUser(int id) async {
     Database db = await database;
     return await db.delete(

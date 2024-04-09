@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../Screens/signup_screen.dart';
 
 class Trailer extends StatelessWidget {
   const Trailer(
@@ -26,7 +25,7 @@ class Trailer extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) {
                 return navigationTo;
               }),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   const CustomTextField({
     Key? key,
     required this.controller,
@@ -21,13 +21,20 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
 
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _obscureText = true;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Row(
           children: [
             Text(
-              labelText,
+              widget.labelText,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -36,19 +43,29 @@ class CustomTextField extends StatelessWidget {
           ],
         ),
         TextFormField(
-          controller: controller,
+          controller: widget.controller,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none,
             ),
             filled: true,
-            prefixIcon: Icon(icon),
+            prefixIcon: Icon(widget.icon),
+            suffixIcon: widget.obscureText
+                ? IconButton(
+              icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
+              },
+            )
+                : null,
           ),
-          onChanged: onChanged,
-          validator: validator,
-          obscureText: obscureText,
+          onChanged: widget.onChanged,
+          validator: widget.validator,
+          obscureText: widget.obscureText && _obscureText,
         ),
         SizedBox(height: 10),
       ],

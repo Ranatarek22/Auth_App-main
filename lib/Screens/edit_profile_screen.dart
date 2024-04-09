@@ -20,6 +20,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  late DatabaseHelper _databaseHelper;
+  String? _imagePath;
   File? _image;
   final picker = ImagePicker();
   final TextEditingController _nameController = TextEditingController();
@@ -39,13 +41,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-   
     _nameController.text = widget.user.name!;
     _studentIDController.text = widget.user.studentId!;
     gender = widget.user.gender ?? ''; 
     level = widget.user.level ?? ''; 
     password = '';
-    confirmPassword = ''; 
+    confirmPassword = '';
+    _databaseHelper = DatabaseHelper();
+    _imagePath = widget.user.imagePath;
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    String? imagePath =
+    await _databaseHelper.getUserImagePath(widget.user.email!);
+    setState(() {
+      _imagePath = imagePath;
+    });
+  }
+  Future getImage(ImageSource source) async {
+    final pickedFile = await picker.pickImage(source: source);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        _imagePath = _image!.path;
+      } else {
+        print('No image selected.');
+      }
+    });
+    if (_image != null && _imagePath != null) {
+      await saveImageToDevice(_image!, _imagePath!.toString().split('/').last);
+      await _saveImagePathToDatabase();
+    }
+  }
+
+
+  Future<void> _saveImagePathToDatabase() async {
+    widget.user.setImagePath(_imagePath!);
+    try {
+      await _databaseHelper.updateUser(widget.user.toMap());
+      // final Directory directory = await getApplicationDocumentsDirectory();
+      // print(directory.path);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> saveImageToDevice(File imageFile, String imageName) async {
+    try {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String imagePath = '${directory.path}/uploads/$imageName';
+      final File newImage = await imageFile.copy(imagePath);
+      _imagePath = newImage.path;
+      print('Image saved to: ${newImage.path}');
+    } catch (e) {
+      print('Error saving image: $e');
+    }
   }
 
   @override
@@ -212,17 +264,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         password: _newPasswordController.text.isNotEmpty
             ? _newPasswordController.text
             : widget.user.password,
-        imagePath: _image?.path,
+        imagePath: _imagePath,
       );
 
      
       int result = await DatabaseHelper().updateUser(updatedUser.toMap());
 
       if (result != 0) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) {
-            return ProfileScreen(user: updatedUser);
-          }),
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(user: updatedUser),
+          ),
         );
       } else {
        
@@ -277,11 +329,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: widget.user.imagePath != null &&
-                        widget.user.imagePath!.isNotEmpty
-                    ? Image.file(File(widget.user.imagePath.toString()))
-                    : _image != null
-                        ? Image.file(_image!, fit: BoxFit.cover)
+                child: _imagePath != null
+                    ? Image.file(File(_imagePath!), fit: BoxFit.cover)
                         : Image.asset(
                             'assets/images/istockphoto-1300845620-612x612-removebg-preview.png',
                             fit: BoxFit.cover,
@@ -341,17 +390,5 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ],
       ),
     );
-  }
-
-  Future getImage(ImageSource source) async {
-    final pickedFile = await picker.pickImage(source: source);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
   }
 }

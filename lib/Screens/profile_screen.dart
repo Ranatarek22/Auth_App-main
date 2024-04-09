@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import '../Model/users.dart';
 import '../Services/sql_db.dart';
 import 'edit_profile_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -177,15 +178,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ElevatedButton(
       onPressed: () async {
         // await _databaseHelper.updateUserLoginStatus(widget.user.email!, false);
-        // Navigate to the login screen
-        Navigator.of(context).pushReplacementNamed(
-            '/login_screen'); // Replace with your login screen route
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+        );
       },
       style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple[100]), // Choose your button color
+          backgroundColor: Colors.purple[100]),
       child: SizedBox(
         height: 50,
-        width: 150,
+        width: double.infinity,
         child: Center(
           child: Text(
             'Log Out',

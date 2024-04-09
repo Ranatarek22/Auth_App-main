@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GenderRadioButton extends StatefulWidget {
-  final Function(String) onChanged; // Add a callback function
-  final String? initialValue; // Initial value
+  final Function(String) onChanged;
+  final String? initialValue;
 
   const GenderRadioButton({Key? key, required this.onChanged, this.initialValue}) : super(key: key);
 
@@ -11,12 +11,12 @@ class GenderRadioButton extends StatefulWidget {
 }
 
 class _GenderRadioButtonState extends State<GenderRadioButton> {
-  late String groupValue; //gender
+  late String groupValue;
 
   @override
   void initState() {
     super.initState();
-    groupValue = widget.initialValue ?? 'Male'; // Set initial value
+    groupValue = widget.initialValue ?? 'Male';
   }
 
   @override
@@ -43,7 +43,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
                 setState(() {
                   groupValue = value.toString();
                   widget.onChanged(
-                      groupValue); // Pass selected value to parent widget
+                      groupValue);
                 });
               },
             ),
@@ -65,7 +65,7 @@ class _GenderRadioButtonState extends State<GenderRadioButton> {
                 setState(() {
                   groupValue = value.toString();
                   widget.onChanged(
-                      groupValue); // Pass selected value to parent widget
+                      groupValue);
                 });
               },
             ),

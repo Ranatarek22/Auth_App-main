@@ -58,10 +58,10 @@ class _SignupInputFormState extends State<SignupInputForm> {
       );
       return; 
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) {
-          return ProfileScreen(user: data);
-        }),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ProfileScreen(user: data),
+        ),
       );
     }
   }
