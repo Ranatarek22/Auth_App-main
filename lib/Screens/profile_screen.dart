@@ -9,7 +9,7 @@ import 'login_screen.dart';
 //
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
-  final User user;
+  final UserData user;
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();

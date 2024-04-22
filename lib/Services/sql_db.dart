@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/users.dart';
@@ -15,7 +14,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), dbName);
 
     return await openDatabase(path,
-        version: 8, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+        version: 9, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
   }
 
   Future<void> _createDatabase(Database db, int version) async {
@@ -35,8 +34,8 @@ class DatabaseHelper {
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 8) {
-      await db.execute('ALTER TABLE $userTable ADD COLUMN imagePath TEXT');
+    if (oldVersion < 9) {
+      //await db.execute('ALTER TABLE $userTable ADD COLUMN id TEXT PRIMARY KEY');
     }
   }
 
@@ -94,11 +93,11 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<User>> getUsers() async {
+  Future<List<UserData>> getUsers() async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(userTable);
     return List.generate(maps.length, (i) {
-      return User(
+      return UserData(
         id: maps[i]['id'],
         name: maps[i]['name'],
         email: maps[i]['email'],
@@ -109,7 +108,7 @@ class DatabaseHelper {
     });
   }
 
-  Future<User?> getUser(String email) async {
+  Future<UserData?> getUser(String email) async {
     Database db = await database;
     List<Map<String, dynamic>> users = await db.query(
       userTable,
@@ -118,8 +117,8 @@ class DatabaseHelper {
     );
 
     if (users.isNotEmpty) {
-      return User(
-        id: users[0]['id'],
+      return UserData(
+        id: users[0]['id'].toString(),
         name: users[0]['name'],
         email: users[0]['email'],
         studentId: users[0]['studentId'],

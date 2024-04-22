@@ -12,7 +12,7 @@ import '../Services/sql_db.dart';
 import 'package:path_provider/path_provider.dart';
 //
 class EditProfileScreen extends StatefulWidget {
-  final User user; 
+  final UserData user;
   const EditProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
@@ -254,7 +254,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _updateProfile(BuildContext context) async {
     
     if (_formKey.currentState!.validate()) {
-      User updatedUser = User(
+      UserData updatedUser = UserData(
         id: widget.user.id,
         name: _nameController.text,
         email: widget.user.email, 

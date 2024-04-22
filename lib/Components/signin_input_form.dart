@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../Services/auth_service.dart';
 import 'custom_text_field.dart';
 import 'package:assignment1/Utilities/secure_storage.dart';
 import 'package:assignment1/Services/sql_db.dart';
+
 //
 class SigninInputForm extends StatefulWidget {
   const SigninInputForm({Key? key});
@@ -20,12 +22,11 @@ class _SigninInputFormState extends State<SigninInputForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _tokenStorage = TokenStorage();
-  late User user;
+  late UserData user;
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   Future<void> _checkCrendentials(BuildContext context) async {
-
-    User? result = await _databaseHelper.getUser(_emailController.text);
+    UserData? result = await _databaseHelper.getUser(_emailController.text);
     print(result);
     if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -67,22 +68,18 @@ class _SigninInputFormState extends State<SigninInputForm> {
     );
 
     if (response.statusCode == 200) {
-
       final token = jsonDecode(response.body)['token'];
       await _tokenStorage.saveToken(token);
       print('Login successful');
       print('Response: ${response.body}');
-
 
       final storedToken = await _tokenStorage.getToken();
       if (storedToken != null) {
         print('Token stored successfully: $storedToken');
       } else {
         print('Failed to store token');
-
       }
     } else {
-
       print('Login failed');
       print('Error: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -138,7 +135,9 @@ class _SigninInputFormState extends State<SigninInputForm> {
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  // _login(context);
+                  AuthService().signInWithEmailAndPassword(
+                      email: _emailController.text,
+                      password: _passwordController.text);
                   _checkCrendentials(context);
                 }
               },

@@ -1,5 +1,5 @@
-class User {
-  int? id;
+class UserData {
+  String? id;
   String? name;
   String? email;
   String? studentId;
@@ -8,7 +8,7 @@ class User {
   String? gender;
   String? imagePath;
 
-  User({
+  UserData({
     this.id,
     this.name,
     this.email,
@@ -39,8 +39,8 @@ class User {
   }
 
   // Convert a Map object into a User object
-  static User fromMap(Map<String, dynamic> map) {
-    return User(
+  static UserData fromMap(Map<String, dynamic> map) {
+    return UserData(
       id: map['id'],
       name: map['name'],
       email: map['email'],

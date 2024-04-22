@@ -1,4 +1,5 @@
 import 'package:assignment1/Screens/profile_screen.dart';
+import 'package:assignment1/Services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,6 +8,7 @@ import 'level_list.dart';
 import 'gender_radio_button.dart';
 import 'package:assignment1/Model/users.dart';
 import 'package:assignment1/Services/sql_db.dart';
+
 //
 class SignupInputForm extends StatefulWidget {
   const SignupInputForm({Key? key});
@@ -14,6 +16,7 @@ class SignupInputForm extends StatefulWidget {
   @override
   State<SignupInputForm> createState() => _SignupInputFormState();
 }
+
 class _SignupInputFormState extends State<SignupInputForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -22,18 +25,12 @@ class _SignupInputFormState extends State<SignupInputForm> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  late User user;
+  late UserData user;
   final DatabaseHelper _databaseHelper = DatabaseHelper();
-  String? name,
-      email,
-      studentId,
-      password,
-      confirmPassword,
-      level,
-      gender; 
+  String? name, email, studentId, password, confirmPassword, level, gender;
 
   Future<void> _saveUserToDatabase(BuildContext context) async {
-    user = User(
+    user = UserData(
       name: _nameController.text,
       email: _emailController.text,
       studentId: _studentIDController.text,
@@ -43,12 +40,11 @@ class _SignupInputFormState extends State<SignupInputForm> {
     );
 
     int result = await _databaseHelper.insertUser(user.toMap());
-    User? data = await _databaseHelper.getUser(_emailController.text);
+    UserData? data = await _databaseHelper.getUser(_emailController.text);
     if (data == null) {
       return;
     }
     if (result == -1) {
-     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -56,7 +52,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
           backgroundColor: Colors.red,
         ),
       );
-      return; 
+      return;
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -76,7 +72,7 @@ class _SignupInputFormState extends State<SignupInputForm> {
       'Content-Type': 'application/json',
     };
 
-    final User user = User(
+    final UserData user = UserData(
       name: _nameController.text,
       email: _emailController.text,
       studentId: _studentIDController.text,
@@ -85,10 +81,8 @@ class _SignupInputFormState extends State<SignupInputForm> {
       gender: gender,
     );
 
-   
     int result = await _databaseHelper.insertUser(user.toMap());
     if (result == -1) {
-     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -106,12 +100,9 @@ class _SignupInputFormState extends State<SignupInputForm> {
     );
 
     if (response.statusCode == 200) {
-    
       print('Signup successful');
       print('Response: ${response.body}');
-    
     } else {
-     
       print('Signup failed');
       print('Error: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -229,14 +220,14 @@ class _SignupInputFormState extends State<SignupInputForm> {
           LevelList(
             onChanged: (value) {
               setState(() {
-                level = value; 
+                level = value;
               });
             },
           ),
           GenderRadioButton(
             onChanged: (value) {
               setState(() {
-                gender = value; 
+                gender = value;
               });
             },
           ),
@@ -247,7 +238,13 @@ class _SignupInputFormState extends State<SignupInputForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _saveUserToDatabase(context);
-                  // _signup(context);
+                  AuthService().signUpWithEmailAndPassword(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                      name: _nameController.text,
+                      studentId: _studentIDController.text,
+                      level: level,
+                      gender: gender);
                 }
               },
               child: Text(
