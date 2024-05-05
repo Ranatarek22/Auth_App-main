@@ -1,42 +1,88 @@
+import 'package:assignment1/Model/users.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../Model/users.dart';
+import '../Model/store.dart';
 
 class DatabaseHelper {
   static Database? _database;
   static const String dbName = 'user_database.db';
   static const String userTable = 'user';
-
+  static const String storeTable = 'stores';
 
   Future<Database> initDatabase() async {
     String databasePath = await getDatabasesPath();
-    print("Location :" + databasePath);
-    String path = join(await getDatabasesPath(), dbName);
+    print("Location: $databasePath");
+    String path = join(databasePath, dbName);
 
-    return await openDatabase(path,
-        version: 9, onCreate: _createDatabase, onUpgrade: _upgradeDatabase);
+    return await openDatabase(
+      path,
+      version: 22, // Updated version number
+      onCreate: _createDatabase,
+      onUpgrade: _upgradeDatabase,
+    );
   }
 
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE $userTable(
-      id INTEGER PRIMARY KEY,
-      name TEXT,
-      email TEXT,
-      studentId TEXT,
-      password TEXT,
-      level TEXT,
-      gender TEXT,
-      imagePath TEXT
-    )
-  ''');
+      CREATE TABLE $userTable(
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        email TEXT,
+        studentId TEXT,
+        password TEXT,
+        level TEXT,
+        gender TEXT,
+        imagePath TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE $storeTable(
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
+        createdAt TEXT NULL,
+        image TEXT Not NULL
+      )
+    ''');
   }
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 9) {
-      //await db.execute('ALTER TABLE $userTable ADD COLUMN id TEXT PRIMARY KEY');
+    if (oldVersion < 22) {
+
+      await _insertInitialStores(db);
     }
+  }
+
+  Future<void> _insertInitialStores(Database db) async {
+ 
+    await db.insert(
+      storeTable,
+      {
+        'id': '1',
+        'name': 'Hyper 1',
+        'latitude': 123.456,
+        'longitude': 456.789,
+        'createdAt': DateTime.now().toString(),
+        'image': 'assets/images/book_store.png', 
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    await db.insert(
+      storeTable,
+      {
+        'id': '2',
+        'name': 'Pizza King',
+        'latitude': 987.654,
+        'longitude': 654.321,
+        'createdAt': DateTime.now().toString(),
+        'image': 'assets/images/default_store.png', 
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<Database> get database async {
@@ -65,7 +111,6 @@ class DatabaseHelper {
     }
   }
 
-  
   Future<int> updateUser(Map<String, dynamic> user) async {
     Database db = await database;
     if (user['email'] == null) {
@@ -75,14 +120,12 @@ class DatabaseHelper {
       userTable,
       {
         ...user,
-        'imagePath': user['imagePath'], 
+        'imagePath': user['imagePath'],
       },
       where: 'email = ?',
       whereArgs: [user['email']!],
     );
   }
-
-
 
   Future<int> deleteUser(int id) async {
     Database db = await database;
@@ -103,7 +146,7 @@ class DatabaseHelper {
         email: maps[i]['email'],
         studentId: maps[i]['studentId'],
         password: maps[i]['password'],
-        level: maps[i]['level'], 
+        level: maps[i]['level'],
       );
     });
   }
@@ -130,8 +173,56 @@ class DatabaseHelper {
       return null;
     }
   }
+
+  Future<int> insertStore(Map<String, dynamic> storeData) async {
+    Database db = await database;
+    return await db.insert(storeTable, storeData);
+  }
+
+  Future<int> addStores(List<Store> stores) async {
+    int insertedCount = 0;
+    for (var store in stores) {
+      Map<String, dynamic> storeData = {
+        'id': store.id,
+        'name': store.name,
+        'latitude': store.latitude,
+        'longitude': store.longitude,
+        'createdAt': store.createdAt,
+        'image': store.image, // Include image path
+      };
+
+      int result = await insertStore(storeData);
+      if (result != -1) {
+        insertedCount++;
+      }
+    }
+    return insertedCount;
+  }
+
+  Future<List<Store>> getStoresFromDatabase() async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(storeTable);
+    List<Store> stores = List.generate(maps.length, (i) {
+      return Store(
+        id: maps[i]['id'].toString(),
+        name: maps[i]['name'],
+        latitude: maps[i]['latitude'],
+        longitude: maps[i]['longitude'],
+        createdAt: maps[i]['createdAt'],
+        image: maps[i]['image'] ?? '', // Ensure correct retrieval of image data
+      );
+    });
+
+    // Print image paths for each store
+    stores.forEach((store) {
+      print('Store ID: ${store.id}, Image Path: ${store.image}');
+    });
+
+    return stores;
+  }
+  Future<void> deleteAllStores() async {
+    Database db = await database;
+    await db.delete(storeTable);
+  }
 }
-//20200187@stud.fci-cu.edu.eg
-//14567891
-//\/data/user/0/com.example.assignment1/databases
-//
+

@@ -1,47 +1,31 @@
 import 'package:assignment1/Constants/constants.dart';
 import 'package:flutter/material.dart';
-
-import '../Model/store_model.dart';
+import 'package:provider/provider.dart';
+import '../Services/stores.dart';
+import '../Model/store.dart';
 
 class StoresScreen extends StatefulWidget {
-  const StoresScreen({super.key});
+  const StoresScreen({Key? key}) : super(key: key);
 
   @override
   State<StoresScreen> createState() => _StoresPageState();
 }
 
 class _StoresPageState extends State<StoresScreen> {
-  List<StoreModel> stores = [
-    StoreModel(
-        name: 'Book Store',
-        image: 'assets/images/book_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'my Store',
-        image: 'assets/images/default_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'Book Store',
-        image: 'assets/images/book_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'my Store',
-        image: 'assets/images/default_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'Book Store',
-        image: 'assets/images/book_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'my Store',
-        image: 'assets/images/default_store.png',
-        location: '1st albert street,chicago'),
-    StoreModel(
-        name: 'Book Store',
-        image: 'assets/images/book_store.png',
-        location: '1st albert street,chicago'),
-  ];
+  bool _isInit = true;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      // Fetch stores when the screen initializes
+      Provider.of<StoreProvider>(context, listen: false).fetchStores();
+      //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
+      _isInit = false;
+    }
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,43 +55,45 @@ class _StoresPageState extends State<StoresScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: stores.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase vertical padding to increase height
-            child: ListTile(
-              contentPadding: EdgeInsets.zero, // Remove default horizontal padding
-              dense: true, // Make ListTile more compact
-              //visualDensity: VisualDensity(horizontal: 0, vertical: -4), // Adjust visual density to reduce height
-              leading: SizedBox(
-                width: 100, // Increase width of the SizedBox to make image larger
-                height: 100, // Increase height of the SizedBox to make image larger
-                child: Image.asset(
-                  stores[index].image,
-                  fit: BoxFit.cover,
+      body: Consumer<StoreProvider>(
+        builder: (context, storeProvider, _) {
+          List<Store> stores = storeProvider.stores;
+          return ListView.builder(
+            itemCount: stores.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Image.asset(
+                      stores[index].image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: Text(
+                    stores[index].name,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  subtitle: Text(
+                    'Longitude: ${stores[index].longitude.toString()}, Latitude: ${stores[index].latitude.toString()}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.favorite_border),
+                    onPressed: () {
+                      // Add store to favorites
+                    },
+                  ),
                 ),
-              ),
-              title: Text(
-                stores[index].name,
-                style: TextStyle(fontSize: 20), // Increase font size of the title text
-              ),
-              subtitle: Text(
-                stores[index].location,
-                style: TextStyle(fontSize: 16), // Increase font size of the subtitle text
-              ),
-              trailing: IconButton(
-                icon: Icon(Icons.favorite_border),
-                onPressed: () {
-                  // Add store to favorites
-                },
-              ),
-            ),
+              );
+            },
           );
         },
       ),
     );
   }
-
-
 }
