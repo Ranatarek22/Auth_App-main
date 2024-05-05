@@ -1,6 +1,7 @@
 // import 'dart:html';
 import 'dart:io';
 import 'package:assignment1/Screens/profile_screen.dart';
+import 'package:assignment1/Services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Components/custom_text_field.dart';
@@ -73,6 +74,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_image != null && _imagePath != null) {
       await saveImageToDevice(_image!, _imagePath!.toString().split('/').last);
       await _saveImagePathToDatabase();
+      await AuthService().uploadImageToStorage(_image, widget.user.email);
     }
   }
 

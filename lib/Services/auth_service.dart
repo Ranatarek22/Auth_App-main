@@ -1,6 +1,7 @@
 import 'package:assignment1/Model/users.dart'; // Assuming UserData is defined in this file
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -55,6 +56,30 @@ class AuthService {
     } catch (e) {
       print('Error signing in: $e');
       throw e; // Rethrow the exception to handle it in the UI
+    }
+  }
+
+  Future<void> uploadImageToStorage(image, userEmail) async {
+    if (image != null) {
+      try {
+        final file = await image.readAsBytes();
+
+        final storageInstance = FirebaseStorage.instance
+            .ref('$userEmail/${image.path.split('/').last}');
+
+        final TaskSnapshot uploadTask = await storageInstance.putData(file);
+
+        // Get download URL of the uploaded image
+        // final String downloadURL = await uploadTask.ref.getDownloadURL();
+
+        // Update user data in Firestore with the image path
+        // await _firestore.collection('users').doc(userEmail).update({
+        //   'imagePath': downloadURL,
+        // });
+      } catch (error) {
+        print('Error uploading image: $error');
+        throw error;
+      }
     }
   }
 }
