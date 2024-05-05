@@ -16,10 +16,10 @@ class StoreProvider extends ChangeNotifier {
 
   // Method to add a new store
   Future<void> addStore() async {
-    await fetchStores();
+    // await fetchStores();
     // Prepare store data as a map
     Map<String, dynamic> storeData = {
-      'id': '1',
+      'id': '8',
       'name': 'H&M',
       'latitude': 900.9,
       'longitude': 800.2,
@@ -28,6 +28,7 @@ class StoreProvider extends ChangeNotifier {
     };
     
       await _databaseHelper.insertStore(storeData);
+      await fetchStores();
       
       // Fetch stores again to update the list
       
