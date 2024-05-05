@@ -173,11 +173,25 @@ class DatabaseHelper {
       return null;
     }
   }
-
-   Future<int> insertStore(Map<String, dynamic> storeData) async {
+Future<int> insertStore(Map<String, dynamic> storeData) async {
     Database db = await database;
-    return await db.insert(storeTable, storeData);
+
+    // Fetch store with the same ID from the database
+    List<Map<String, dynamic>> existingStore = await db.query(
+      storeTable,
+      where: 'id = ?',
+      whereArgs: [storeData['id']],
+    );
+
+    // If no record with the same ID exists, insert the store into the database
+    if (existingStore.isEmpty) {
+      return await db.insert(storeTable, storeData);
+    } else {
+      // Return a value to indicate that the store was not inserted
+      return -1; // You can choose any value to indicate failure
+    }
   }
+
 
   Future<List<Store>> getStoresFromDatabase() async {
     Database db = await database;
