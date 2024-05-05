@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 22, // Updated version number
+      version: 23, // Updated version number
       onCreate: _createDatabase,
       onUpgrade: _upgradeDatabase,
     );
@@ -50,14 +50,14 @@ class DatabaseHelper {
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 22) {
+    if (oldVersion < 23) {
 
       await _insertInitialStores(db);
     }
   }
 
   Future<void> _insertInitialStores(Database db) async {
- 
+   
     await db.insert(
       storeTable,
       {
@@ -174,29 +174,9 @@ class DatabaseHelper {
     }
   }
 
-  Future<int> insertStore(Map<String, dynamic> storeData) async {
+   Future<int> insertStore(Map<String, dynamic> storeData) async {
     Database db = await database;
     return await db.insert(storeTable, storeData);
-  }
-
-  Future<int> addStores(List<Store> stores) async {
-    int insertedCount = 0;
-    for (var store in stores) {
-      Map<String, dynamic> storeData = {
-        'id': store.id,
-        'name': store.name,
-        'latitude': store.latitude,
-        'longitude': store.longitude,
-        'createdAt': store.createdAt,
-        'image': store.image, // Include image path
-      };
-
-      int result = await insertStore(storeData);
-      if (result != -1) {
-        insertedCount++;
-      }
-    }
-    return insertedCount;
   }
 
   Future<List<Store>> getStoresFromDatabase() async {

@@ -3,7 +3,7 @@ class Store {
   final String name;
   final double latitude;
   final double longitude;
-  final String createdAt;
+  String? createdAt;
   final String image; // Added image field
 
   Store({
@@ -11,7 +11,7 @@ class Store {
     required this.name,
     required this.latitude,
     required this.longitude,
-    required this.createdAt,
+    this.createdAt,
     required this.image, // Added image field
   });
 

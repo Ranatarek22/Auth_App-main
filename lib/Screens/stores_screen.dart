@@ -20,6 +20,7 @@ class _StoresPageState extends State<StoresScreen> {
     if (_isInit) {
       // Fetch stores when the screen initializes
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
+      Provider.of<StoreProvider>(context, listen: false).addStore();
       //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
       _isInit = false;
     }

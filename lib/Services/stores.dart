@@ -14,25 +14,24 @@ class StoreProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to add a new store
-  Future<void> addStore(Store store) async {
-    // Prepare store data as a map
+  Future<void> addStore() async {
     Map<String, dynamic> storeData = {
-      'id': store.id,
-      'name': store.name,
-      'latitude': store.latitude,
-      'longitude': store.longitude,
-      'createdAt': store.createdAt,
-      'image': store.image,
+      'id': '1',
+      'name': 'Awlad Ragab',
+      'latitude': 900.9,
+      'longitude': 800.2,
+      // 'createdAt': store.createdAt,
+      'image': 'assets/images/book_store.png',
     };
-
-    // Insert the store into the database
-    await _databaseHelper.insertStore(storeData);
-
-    // Fetch stores again to update the list
-    await fetchStores();
+    if (_stores.isNotEmpty && _stores[0].id != storeData['id']) {
+      await _databaseHelper.insertStore(storeData);
+      await fetchStores();
+    } else {
+      print('Store ID already exists.');
+    }
   }
-   Future<void> deleteAllStores() async {
+
+  Future<void> deleteAllStores() async {
     await _databaseHelper.deleteAllStores();
     _stores.clear();
     notifyListeners();
