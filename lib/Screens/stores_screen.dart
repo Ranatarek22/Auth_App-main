@@ -1,7 +1,7 @@
 import 'package:assignment1/Constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Services/stores.dart';
+import '../Services/stores_provider.dart';
 import '../Model/store.dart';
 
 class StoresScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class _StoresPageState extends State<StoresScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, 'AddStoreScreen');
+
             },
             icon: Icon(
               Icons.add,

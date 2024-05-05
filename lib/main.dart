@@ -2,7 +2,7 @@ import 'package:assignment1/Screens/profile_screen.dart';
 import 'package:assignment1/Screens/stores_screen.dart';
 import 'package:assignment1/Screens/welcome_screen.dart';
 import 'package:assignment1/Services/sql_db.dart';
-import 'package:assignment1/Services/stores.dart';
+import 'package:assignment1/Services/stores_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
