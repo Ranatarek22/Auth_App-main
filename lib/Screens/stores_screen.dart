@@ -1,4 +1,5 @@
 import 'package:assignment1/Constants/constants.dart';
+import 'package:assignment1/Screens/favorite_stores_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Services/stores_provider.dart';
@@ -27,7 +28,6 @@ class _StoresPageState extends State<StoresScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -40,10 +40,17 @@ class _StoresPageState extends State<StoresScreen> {
         actions: [
           IconButton(
             onPressed: () {
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return FavoriteStoresScreen();
+                  },
+                ),
+              );
             },
             icon: Icon(
-              Icons.add,
+              Icons.favorite,
             ),
           ),
           IconButton(
@@ -63,31 +70,46 @@ class _StoresPageState extends State<StoresScreen> {
             itemCount: stores.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  leading: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image.asset(
-                      stores[index].image,
-                      fit: BoxFit.cover,
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset(
+                        stores[index].image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    stores[index].name,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Text(
-                    'Longitude: ${stores[index].longitude.toString()}, Latitude: ${stores[index].latitude.toString()}',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.favorite_border),
-                    onPressed: () {
-                      // Add store to favorites
-                    },
+                    title: Text(
+                      stores[index].name,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Longitude: ${stores[index].longitude.toString()},',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          'Latitude: ${stores[index].latitude.toString()}',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.favorite_border),
+                      onPressed: () {
+                        // Add store to favorites
+                      },
+                    ),
                   ),
                 ),
               );

@@ -1,4 +1,4 @@
-class FavouriteStore {
+class FavoriteStore {
   final String id;
   final String name;
   final double latitude;
@@ -6,7 +6,7 @@ class FavouriteStore {
   String? createdAt;
   final String image; // Added image field
 
-  FavouriteStore({
+  FavoriteStore({
     required this.id,
     required this.name,
     required this.latitude,
