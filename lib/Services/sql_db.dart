@@ -2,6 +2,7 @@ import 'package:assignment1/Model/users.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/store.dart';
+import '../Model/fav_store.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -16,7 +17,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 23, // Updated version number
+      version: 25, // Updated version number
       onCreate: _createDatabase,
       onUpgrade: _upgradeDatabase,
     );
@@ -46,27 +47,69 @@ class DatabaseHelper {
         image TEXT Not NULL
       )
     ''');
+    await db.execute('''
+    CREATE TABLE favoriteStores(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      store_id INTEGER,
+      FOREIGN KEY (user_id) REFERENCES $userTable(id),
+      FOREIGN KEY (store_id) REFERENCES $storeTable(id)
+    )
+  ''');
   }
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 23) {
+    if (oldVersion < 25) {
+      var tables = await db.query("sqlite_master",
+          where: "type = 'table' AND name = '$storeTable'");
+      if (tables.isNotEmpty) {
+        await db.execute('''
+        CREATE TABLE temp_$storeTable(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          latitude REAL NOT NULL,
+          longitude REAL NOT NULL,
+          createdAt TEXT NULL,
+          image TEXT Not NULL
+        )
+      ''');
 
+        await db.execute('''
+        INSERT INTO temp_$storeTable
+        SELECT * FROM $storeTable
+      ''');
+
+        await db.execute('''
+        DROP TABLE $storeTable
+      ''');
+
+        await db.execute('''
+        ALTER TABLE temp_$storeTable RENAME TO $storeTable
+      ''');
+      }
+      await db.execute('''
+    CREATE TABLE favoriteStores(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      store_id INTEGER,
+      FOREIGN KEY (user_id) REFERENCES $userTable(id),
+      FOREIGN KEY (store_id) REFERENCES $storeTable(id)
+    )
+  ''');
       await _insertInitialStores(db);
     }
   }
 
   Future<void> _insertInitialStores(Database db) async {
-   
     await db.insert(
       storeTable,
       {
-        'id': '1',
         'name': 'Hyper 1',
         'latitude': 123.456,
         'longitude': 456.789,
         'createdAt': DateTime.now().toString(),
-        'image': 'assets/images/book_store.png', 
+        'image': 'assets/images/book_store.png',
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -74,12 +117,11 @@ class DatabaseHelper {
     await db.insert(
       storeTable,
       {
-        'id': '2',
         'name': 'Pizza King',
         'latitude': 987.654,
         'longitude': 654.321,
         'createdAt': DateTime.now().toString(),
-        'image': 'assets/images/default_store.png', 
+        'image': 'assets/images/default_store.png',
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -127,6 +169,29 @@ class DatabaseHelper {
     );
   }
 
+  Future<UserData?> getUserById(String userId) async {
+    Database db = await database;
+    List<Map<String, dynamic>> users = await db.query(
+      userTable,
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+
+    if (users.isNotEmpty) {
+      return UserData(
+        id: users[0]['id'].toString(),
+        name: users[0]['name'],
+        email: users[0]['email'],
+        studentId: users[0]['studentId'],
+        password: users[0]['password'],
+        level: users[0]['level'],
+        gender: users[0]['gender'],
+      );
+    } else {
+      return null;
+    }
+  }
+
   Future<int> deleteUser(int id) async {
     Database db = await database;
     return await db.delete(
@@ -141,7 +206,7 @@ class DatabaseHelper {
     List<Map<String, dynamic>> maps = await db.query(userTable);
     return List.generate(maps.length, (i) {
       return UserData(
-        id: maps[i]['id'],
+        id: maps[i]['id'].toString(),
         name: maps[i]['name'],
         email: maps[i]['email'],
         studentId: maps[i]['studentId'],
@@ -173,7 +238,8 @@ class DatabaseHelper {
       return null;
     }
   }
-Future<int> insertStore(Map<String, dynamic> storeData) async {
+
+  Future<int> insertStore(Map<String, dynamic> storeData) async {
     Database db = await database;
 
     // Fetch store with the same ID from the database
@@ -191,7 +257,6 @@ Future<int> insertStore(Map<String, dynamic> storeData) async {
       return -1; // You can choose any value to indicate failure
     }
   }
-
 
   Future<List<Store>> getStoresFromDatabase() async {
     Database db = await database;
@@ -214,9 +279,69 @@ Future<int> insertStore(Map<String, dynamic> storeData) async {
 
     return stores;
   }
+
+  Future<void> insertFavoriteStore(String userId, String storeId) async {
+    Database db = await database;
+    await db.insert(
+      'favoriteStores',
+      {
+        'user_id': userId,
+        'store_id': storeId,
+      },
+      conflictAlgorithm:
+          ConflictAlgorithm.ignore, // or replace as per your requirement
+    );
+  }
+
+  Future<List<FavoriteStore>> getFavoriteStores(String userId) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'favoriteStores',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+    );
+
+    List<FavoriteStore> favoriteStores = [];
+    for (Map<String, dynamic> map in maps) {
+      // Fetch store details using store ID
+      Store? store = await getStoreById(map['store_id'].toString());
+      if (store != null) {
+        favoriteStores.add(FavoriteStore(
+          id: map['id'],
+          userId: map['user_id'].toString(),
+          storeId: map['store_id'].toString(),
+          store: store,
+        ));
+      }
+    }
+    return favoriteStores;
+  }
+
+  Future<Store?> getStoreById(String storeId) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'stores',
+      where: 'id = ?',
+      whereArgs: [storeId],
+    );
+
+    if (maps.isNotEmpty) {
+      return Store(
+        id: maps[0]['id'].toString(),
+        name: maps[0]['name'],
+        latitude: maps[0]['latitude'],
+        longitude: maps[0]['longitude'],
+        createdAt: maps[0]['createdAt'],
+        image: maps[0]['image'],
+      );
+    } else {
+      return null;
+    }
+  }
+
+
   Future<void> deleteAllStores() async {
     Database db = await database;
     await db.delete(storeTable);
   }
 }
-

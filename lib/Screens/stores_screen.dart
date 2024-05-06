@@ -1,11 +1,14 @@
 import 'package:assignment1/Constants/constants.dart';
+import 'package:assignment1/Services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Services/stores.dart';
 import '../Model/store.dart';
 
 class StoresScreen extends StatefulWidget {
-  const StoresScreen({Key? key}) : super(key: key);
+  final String userId; // Add userId parameter here
+
+  const StoresScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<StoresScreen> createState() => _StoresPageState();
@@ -18,9 +21,8 @@ class _StoresPageState extends State<StoresScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isInit) {
-      // Fetch stores when the screen initializes
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
-      Provider.of<StoreProvider>(context, listen: false).addStore();
+      // Provider.of<StoreProvider>(context, listen: false).addStore();
       //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
       _isInit = false;
     }
@@ -86,7 +88,11 @@ class _StoresPageState extends State<StoresScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.favorite_border),
                     onPressed: () {
-                      // Add store to favorites
+                      // Get the current user ID
+                      storeProvider.addToFavorites(
+                          stores[index], widget.userId);
+                          //  Provider.of<StoreProvider>(context, listen: false)
+                          // .printFavoriteStoresForUsers();
                     },
                   ),
                 ),

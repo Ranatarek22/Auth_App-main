@@ -1,5 +1,6 @@
 import 'package:assignment1/Model/users.dart';
 import 'package:assignment1/Screens/profile_screen.dart';
+import 'package:assignment1/Screens/stores_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,7 +26,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
   late UserData user;
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  Future<void> _checkCrendentials(BuildContext context) async {
+Future<void> _checkCrendentials(BuildContext context) async {
     UserData? result = await _databaseHelper.getUser(_emailController.text);
     print(result);
     if (result == null) {
@@ -44,8 +45,17 @@ class _SigninInputFormState extends State<SigninInputForm> {
           builder: (context) => ProfileScreen(user: result),
         ),
       );
+      // Pass the user ID to the StoresScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              StoresScreen(userId: result.id!), // Pass the user ID here
+        ),
+      );
     }
   }
+
 
   Future<void> _login(BuildContext context) async {
     final baseUrl = 'https://nexus-api-h3ik.onrender.com';
