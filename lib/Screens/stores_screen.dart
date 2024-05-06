@@ -97,11 +97,7 @@ class _StoresPageState extends State<StoresScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Longitude: ${stores[index].longitude.toString()},',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          'Latitude: ${stores[index].latitude.toString()}',
+                          'Longitude: ${stores[index].longitude.toString()}, Latitude: ${stores[index].latitude.toString()}',
                           style: TextStyle(fontSize: 16),
                         ),
                       ],
@@ -109,27 +105,13 @@ class _StoresPageState extends State<StoresScreen> {
                     trailing: IconButton(
                       icon: Icon(Icons.favorite_border),
                       onPressed: () {
-                        // Add store to favorites
+                        // Get the current user ID
+                        storeProvider.addToFavorites(
+                            stores[index], widget.userId);
+                        //  Provider.of<StoreProvider>(context, listen: false)
+                        // .printFavoriteStoresForUsers();
                       },
                     ),
-                  ),
-                  title: Text(
-                    stores[index].name,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Text(
-                    'Longitude: ${stores[index].longitude.toString()}, Latitude: ${stores[index].latitude.toString()}',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.favorite_border),
-                    onPressed: () {
-                      // Get the current user ID
-                      storeProvider.addToFavorites(
-                          stores[index], widget.userId);
-                          //  Provider.of<StoreProvider>(context, listen: false)
-                          // .printFavoriteStoresForUsers();
-                    },
                   ),
                 ),
               );
