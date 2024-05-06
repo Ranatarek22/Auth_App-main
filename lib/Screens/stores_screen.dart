@@ -1,4 +1,6 @@
 import 'package:assignment1/Constants/constants.dart';
+import 'package:assignment1/Model/users.dart';
+import 'package:assignment1/Screens/profile_screen.dart';
 import 'package:assignment1/Services/auth_service.dart';
 import 'package:assignment1/Screens/favorite_stores_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +10,10 @@ import '../Model/store.dart';
 
 class StoresScreen extends StatefulWidget {
   final String userId; // Add userId parameter here
+  final UserData userData;
 
-  const StoresScreen({Key? key, required this.userId}) : super(key: key);
+  const StoresScreen({Key? key, required this.userId, required this.userData})
+      : super(key: key);
 
   @override
   State<StoresScreen> createState() => _StoresPageState();
@@ -25,6 +29,7 @@ class _StoresPageState extends State<StoresScreen> {
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
       // Provider.of<StoreProvider>(context, listen: false).addStore();
       //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
+      //Future<UserData?> userData = Provider.of<StoreProvider>(context, listen: false).fetchUserById(widget.userId);
       _isInit = false;
     }
   }
@@ -46,7 +51,9 @@ class _StoresPageState extends State<StoresScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return FavoriteStoresScreen();
+                    return FavoriteStoresScreen(
+                      userData: widget.userData,
+                    );
                   },
                 ),
               );
@@ -57,7 +64,9 @@ class _StoresPageState extends State<StoresScreen> {
           ),
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, 'ProfileScreen');
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return ProfileScreen(user: widget.userData);
+              }));
             },
             icon: Icon(
               Icons.person_sharp,
@@ -122,3 +131,5 @@ class _StoresPageState extends State<StoresScreen> {
     );
   }
 }
+//20200588@stud.fci-cu.edu.eg
+//12345678

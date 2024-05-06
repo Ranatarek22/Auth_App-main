@@ -7,6 +7,7 @@ import '../Model/users.dart';
 import '../Services/sql_db.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
+
 //
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -52,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_image != null && _imagePath != null) {
       await saveImageToDevice(_image!, _imagePath!.toString().split('/').last);
       await _saveImagePathToDatabase();
-      await AuthService().uploadImageToStorage(_image,widget.user.email);
+      await AuthService().uploadImageToStorage(_image, widget.user.email);
     }
   }
 
@@ -84,7 +85,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: Icon(Icons.arrow_back),
         ),
         centerTitle: true,
@@ -186,8 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple[100]),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.purple[100]),
       child: SizedBox(
         height: 50,
         width: double.infinity,

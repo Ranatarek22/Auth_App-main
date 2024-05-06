@@ -42,15 +42,7 @@ Future<void> _checkCrendentials(BuildContext context) async {
       print(result.password);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(user: result),
-        ),
-      );
-      // Pass the user ID to the StoresScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              StoresScreen(userId: result.id!), // Pass the user ID here
+          builder: (context) =>  StoresScreen(userId: result.id!,userData: result,),
         ),
       );
     }

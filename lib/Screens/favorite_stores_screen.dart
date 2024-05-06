@@ -1,12 +1,16 @@
 import 'package:assignment1/Screens/distance_dialog.dart';
+import 'package:assignment1/Screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../Constants/constants.dart';
 import '../Model/favorite_store.dart';
+import '../Model/users.dart';
 
 class FavoriteStoresScreen extends StatefulWidget {
-  const FavoriteStoresScreen({super.key});
+  const FavoriteStoresScreen({super.key, required this.userData});
+
+  final UserData userData;
 
   @override
   State<FavoriteStoresScreen> createState() => _FavoriteStoresScreenState();
@@ -41,7 +45,9 @@ class _FavoriteStoresScreenState extends State<FavoriteStoresScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'ProfileScreen');
+                Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  return ProfileScreen(user: widget.userData);
+                }));
               },
               icon: Icon(
                 Icons.person_sharp,

@@ -3,6 +3,7 @@ import 'package:assignment1/Services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../Screens/stores_screen.dart';
 import 'custom_text_field.dart';
 import 'level_list.dart';
 import 'gender_radio_button.dart';
@@ -56,63 +57,63 @@ class _SignupInputFormState extends State<SignupInputForm> {
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(user: data),
+          builder: (context) => StoresScreen(userId: data.id!,userData: data,),
         ),
       );
     }
   }
 
-  Future<void> _signup(BuildContext context) async {
-    final baseUrl = 'https://nexus-api-h3ik.onrender.com';
-    final endpoint = '/api/auth/signup';
-
-    final url = Uri.parse('$baseUrl$endpoint');
-
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
-
-    final UserData user = UserData(
-      name: _nameController.text,
-      email: _emailController.text,
-      studentId: _studentIDController.text,
-      password: _passwordController.text,
-      level: level,
-      gender: gender,
-    );
-
-    int result = await _databaseHelper.insertUser(user.toMap());
-    if (result == -1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'This email is already in use. Please use a different email.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode(user.toMap()),
-    );
-
-    if (response.statusCode == 200) {
-      print('Signup successful');
-      print('Response: ${response.body}');
-    } else {
-      print('Signup failed');
-      print('Error: ${response.body}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Signup failed. Please try again.'),
-          backgroundColor: Colors.grey,
-        ),
-      );
-    }
-  }
+  // Future<void> _signup(BuildContext context) async {
+  //   final baseUrl = 'https://nexus-api-h3ik.onrender.com';
+  //   final endpoint = '/api/auth/signup';
+  //
+  //   final url = Uri.parse('$baseUrl$endpoint');
+  //
+  //   final Map<String, String> headers = {
+  //     'Content-Type': 'application/json',
+  //   };
+  //
+  //   final UserData user = UserData(
+  //     name: _nameController.text,
+  //     email: _emailController.text,
+  //     studentId: _studentIDController.text,
+  //     password: _passwordController.text,
+  //     level: level,
+  //     gender: gender,
+  //   );
+  //
+  //   int result = await _databaseHelper.insertUser(user.toMap());
+  //   if (result == -1) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //             'This email is already in use. Please use a different email.'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //     return;
+  //   }
+  //
+  //   final response = await http.post(
+  //     url,
+  //     headers: headers,
+  //     body: jsonEncode(user.toMap()),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     print('Signup successful');
+  //     print('Response: ${response.body}');
+  //   } else {
+  //     print('Signup failed');
+  //     print('Error: ${response.body}');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Signup failed. Please try again.'),
+  //         backgroundColor: Colors.grey,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

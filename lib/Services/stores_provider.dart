@@ -22,11 +22,12 @@ class StoreProvider extends ChangeNotifier {
   UserData? _currentUser; // Variable to store the current user
 
   // Method to fetch the user by ID
-  Future<void> fetchUserById(String userId) async {
+  Future<UserData?> fetchUserById(String userId) async {
     _currentUser = await _databaseHelper.getUserById(userId);
     if (_currentUser != null) {
       _userId = _currentUser!.id!;
     }
+    return _currentUser;
   }
 
 

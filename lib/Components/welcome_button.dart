@@ -13,7 +13,7 @@ class WelcomeButton extends StatelessWidget {
       height: 59,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.of(context).push(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) {
                 return navigationTo;
