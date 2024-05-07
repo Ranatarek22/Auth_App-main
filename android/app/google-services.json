@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "590216105456",
-    "project_id": "auth-app-5876b",
-    "storage_bucket": "auth-app-5876b.appspot.com"
+    "project_number": "229997766723",
+    "project_id": "assignment1-1e20c",
+    "storage_bucket": "assignment1-1e20c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:590216105456:android:516b28e05c5647df416135",
+        "mobilesdk_app_id": "1:229997766723:android:c0be235c730e79557b0cf6",
         "android_client_info": {
           "package_name": "com.example.assignment1"
         }
@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDTFg9arc4y4dl4Zvuzt9IuMfl00jxbbIY"
+          "current_key": "AIzaSyA9qiiWvWmS5f8kXa1tmmR2UKMlhZ9gP9k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229997766723:android:209143d1e5ba973d7b0cf6",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9qiiWvWmS5f8kXa1tmmR2UKMlhZ9gP9k"
         }
       ],
       "services": {
