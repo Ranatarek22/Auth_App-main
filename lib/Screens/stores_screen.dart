@@ -27,7 +27,7 @@ class _StoresPageState extends State<StoresScreen> {
     super.didChangeDependencies();
     if (_isInit) {
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
-      // Provider.of<StoreProvider>(context, listen: false).addStore();
+      Provider.of<StoreProvider>(context, listen: false).addStore();
       //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
       //Future<UserData?> userData = Provider.of<StoreProvider>(context, listen: false).fetchUserById(widget.userId);
       _isInit = false;
