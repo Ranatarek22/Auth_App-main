@@ -55,7 +55,7 @@ class AuthService {
       // Sign-in successful, no further action needed in this method
     } catch (e) {
       print('Error signing in: $e');
-      throw e; // Rethrow the exception to handle it in the UI
+      print( e); // Rethrow the exception to handle it in the UI
     }
   }
 

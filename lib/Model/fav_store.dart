@@ -4,7 +4,7 @@ class FavoriteStore {
   final int id;
   final String userId;
   final String storeId;
-   Store ?store;
+  Store? store;
 
   FavoriteStore({
     required this.id,

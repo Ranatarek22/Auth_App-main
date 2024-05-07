@@ -12,8 +12,7 @@ class StoresScreen extends StatefulWidget {
   final String userId; // Add userId parameter here
   final UserData userData;
 
-  const StoresScreen({Key? key, required this.userId, required this.userData})
-      : super(key: key);
+  const StoresScreen({Key? key, required this.userId, required this.userData}) : super(key: key);
 
   @override
   State<StoresScreen> createState() => _StoresPageState();
@@ -131,5 +130,10 @@ class _StoresPageState extends State<StoresScreen> {
     );
   }
 }
-//20200588@stud.fci-cu.edu.eg
-//12345678
+// //20200588@stud.fci-cu.edu.eg
+// //12345678
+
+
+
+
+

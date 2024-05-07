@@ -57,7 +57,10 @@ class _SignupInputFormState extends State<SignupInputForm> {
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => StoresScreen(userId: data.id!,userData: data,),
+          builder: (context) => StoresScreen(
+            userId: data.id!,
+            userData: data,
+          ),
         ),
       );
     }

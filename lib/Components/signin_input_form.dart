@@ -26,7 +26,7 @@ class _SigninInputFormState extends State<SigninInputForm> {
   late UserData user;
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-Future<void> _checkCrendentials(BuildContext context) async {
+  Future<void> _checkCrendentials(BuildContext context) async {
     UserData? result = await _databaseHelper.getUser(_emailController.text);
     print(result);
     if (result == null) {
@@ -42,12 +42,14 @@ Future<void> _checkCrendentials(BuildContext context) async {
       print(result.password);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) =>  StoresScreen(userId: result.id!,userData: result,),
+          builder: (context) => StoresScreen(
+            userId: result.id!,
+            userData: result,
+          ),
         ),
       );
     }
   }
-
 
   Future<void> _login(BuildContext context) async {
     final baseUrl = 'https://nexus-api-h3ik.onrender.com';
