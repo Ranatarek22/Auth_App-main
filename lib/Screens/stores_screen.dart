@@ -31,6 +31,9 @@ class _StoresPageState extends State<StoresScreen> {
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
       Provider.of<StoreProvider>(context, listen: false)
           .fetchFavoriteStores(widget.userId);
+      Provider.of<StoreProvider>(context, listen: false).addStore();
+      //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
+      //Future<UserData?> userData = Provider.of<StoreProvider>(context, listen: false).fetchUserById(widget.userId);
       _isInit = false;
     }
   }
