@@ -280,18 +280,33 @@ class DatabaseHelper {
     return stores;
   }
 
-  Future<void> insertFavoriteStore(String userId, String storeId) async {
+Future<void> insertFavoriteStore(String userId, String storeId) async {
     Database db = await database;
-    await db.insert(
+
+    // Check if the record already exists
+    List<Map<String, dynamic>> existingRecords = await db.query(
       'favoriteStores',
-      {
-        'user_id': userId,
-        'store_id': storeId,
-      },
-      conflictAlgorithm:
-          ConflictAlgorithm.ignore, // or replace as per your requirement
+      where: 'user_id = ? AND store_id = ?',
+      whereArgs: [userId, storeId],
     );
+
+
+    if (existingRecords.isEmpty) {
+      await db.insert(
+        'favoriteStores',
+        {
+          'user_id': userId,
+          'store_id': storeId,
+        },
+        conflictAlgorithm:
+            ConflictAlgorithm.ignore, 
+      );
+    } else {
+      // Print a message or handle the case where the record already exists
+      print('Record already exists for user ID $userId and store ID $storeId');
+    }
   }
+
 
   Future<List<FavoriteStore>> getFavoriteStores(String userId) async {
     Database db = await database;
@@ -339,6 +354,24 @@ class DatabaseHelper {
     }
   }
 
+  Future<void> deleteStoreById(int storeId) async {
+    Database db = await database;
+    await db.delete(
+      storeTable,
+      where: 'id = ?',
+      whereArgs: [storeId],
+    );
+  }
+
+  Future<void> deleteFavoriteStoreByUserIdAndStoreId(
+      String userId, String storeId) async {
+    Database db = await database;
+    await db.delete(
+      'favoriteStores',
+      where: 'user_id = ? AND store_id = ?',
+      whereArgs: [userId, storeId],
+    );
+  }
 
   Future<void> deleteAllStores() async {
     Database db = await database;

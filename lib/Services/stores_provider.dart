@@ -12,16 +12,14 @@ class StoreProvider extends ChangeNotifier {
   List<FavoriteStore> get favoritestores => _favoriteStores;
   List<Store> get stores => _stores;
 
-  // Method to fetch stores from the database
   Future<void> fetchStores() async {
     _stores = await _databaseHelper.getStoresFromDatabase();
     notifyListeners();
   }
 
-  String _userId = ''; // Variable to store the user ID
-  UserData? _currentUser; // Variable to store the current user
+  String _userId = ''; 
+  UserData? _currentUser; 
 
-  // Method to fetch the user by ID
   Future<UserData?> fetchUserById(String userId) async {
     _currentUser = await _databaseHelper.getUserById(userId);
     if (_currentUser != null) {
@@ -30,14 +28,14 @@ class StoreProvider extends ChangeNotifier {
     return _currentUser;
   }
 
-  // Method to add a new store
+  
   Future<void> addStore() async {
     Map<String, dynamic> storeData = {
-      'name': 'H&M',
-      'latitude': 900.9,
-      'longitude': 800.2,
+      'name': 'Pizza King',
+      'latitude': 31.178312,
+      'longitude': 30.185926,
       // 'createdAt': store.createdAt,
-      'image': 'assets/images/book_store.png',
+      'image': 'assets/images/pizza.png',
     };
 
     await _databaseHelper.insertStore(storeData);
@@ -121,6 +119,27 @@ class StoreProvider extends ChangeNotifier {
     }
   }
 
+
+  Future<void> deleteFavoriteStore(String userId, String storeId) async {
+    try {
+      await _databaseHelper.deleteFavoriteStoreByUserIdAndStoreId(userId, storeId);
+      // Fetch favorite stores again to update the list
+      await fetchFavoriteStores(userId);
+    } catch (error) {
+      print('Error deleting favorite store: $error');
+    }
+  }
+
+  Future<void> deleteStore(int storeId) async {
+    try {
+      // Call the deleteStoreById method from DatabaseHelper
+      await _databaseHelper.deleteStoreById(storeId);
+      // Fetch stores again to update the list
+      await fetchStores();
+    } catch (error) {
+      print('Error deleting store: $error');
+    }
+  }
   Future<void> deleteAllStores() async {
     await _databaseHelper.deleteAllStores();
     _stores.clear();

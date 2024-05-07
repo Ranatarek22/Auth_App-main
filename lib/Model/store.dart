@@ -4,7 +4,8 @@ class Store {
   final double latitude;
   final double longitude;
   String? createdAt;
-  final String image; // Added image field
+  final String image;
+ bool isFavorite; 
 
   Store({
     required this.id,
@@ -12,7 +13,8 @@ class Store {
     required this.latitude,
     required this.longitude,
     this.createdAt,
-    required this.image, // Added image field
+    required this.image,
+  this.isFavorite = false, // Added image field
   });
 
   // Method to convert Store object to a map

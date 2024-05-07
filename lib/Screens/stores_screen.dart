@@ -9,10 +9,11 @@ import '../Services/stores_provider.dart';
 import '../Model/store.dart';
 
 class StoresScreen extends StatefulWidget {
-  final String userId; // Add userId parameter here
+  final String userId;
   final UserData userData;
 
-  const StoresScreen({Key? key, required this.userId, required this.userData}) : super(key: key);
+  const StoresScreen({Key? key, required this.userId, required this.userData})
+      : super(key: key);
 
   @override
   State<StoresScreen> createState() => _StoresPageState();
@@ -25,10 +26,11 @@ class _StoresPageState extends State<StoresScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isInit) {
+      // Provider.of<StoreProvider>(context, listen: false).deleteStore(19);
+      //  Provider.of<StoreProvider>(context, listen: false).addStore();
       Provider.of<StoreProvider>(context, listen: false).fetchStores();
-      // Provider.of<StoreProvider>(context, listen: false).addStore();
-      //  Provider.of<StoreProvider>(context, listen: false).deleteAllStores();
-      //Future<UserData?> userData = Provider.of<StoreProvider>(context, listen: false).fetchUserById(widget.userId);
+      Provider.of<StoreProvider>(context, listen: false)
+          .fetchFavoriteStores(widget.userId);
       _isInit = false;
     }
   }
@@ -76,9 +78,14 @@ class _StoresPageState extends State<StoresScreen> {
       body: Consumer<StoreProvider>(
         builder: (context, storeProvider, _) {
           List<Store> stores = storeProvider.stores;
+          List<String> favoriteStoreIds =
+              storeProvider.favoritestores.map((e) => e.storeId).toList();
+
           return ListView.builder(
             itemCount: stores.length,
             itemBuilder: (context, index) {
+              bool isFavorite = favoriteStoreIds.contains(stores[index].id);
+
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -111,13 +118,25 @@ class _StoresPageState extends State<StoresScreen> {
                       ],
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.favorite_border),
-                      onPressed: () {
-                        // Get the current user ID
-                        storeProvider.addToFavorites(
-                            stores[index], widget.userId);
-                        //  Provider.of<StoreProvider>(context, listen: false)
-                        // .printFavoriteStoresForUsers();
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : null,
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          if (isFavorite) {
+                            Provider.of<StoreProvider>(context, listen: false)
+                                .deleteFavoriteStore(
+                                    widget.userId, stores[index].id);
+                          } else {
+                            Provider.of<StoreProvider>(context, listen: false)
+                                .addToFavorites(stores[index], widget.userId)
+                                .then((_) {
+                              Provider.of<StoreProvider>(context, listen: false)
+                                  .fetchFavoriteStores(widget.userId);
+                            });
+                          }
+                        });
                       },
                     ),
                   ),
